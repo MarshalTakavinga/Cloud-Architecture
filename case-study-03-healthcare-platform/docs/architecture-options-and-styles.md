@@ -51,4 +51,10 @@ Reference guide Section 6 lists the full menu. Applying the same discipline the 
 
 ## 3. Where This Leaves the Target Direction
 
-A single sentence version, before the ADRs below spell out the reasoning: **replatform the CareLink PM core to meet the compliance deadline, and wrap the parts Meridian actually owns — portal, telehealth, integration — in a Strangler Fig of small, event-driven, API-first services sitting behind a Zero Trust identity/network layer, provisioned through a shared-services landing zone.** Step 5 turns this sentence into an actual vendor-neutral logical diagram.
+A single sentence version, with the full reasoning recorded in [ADR-001](../adr/ADR-001-migration-strategy-carelink-pm-core.md) and [ADR-002](../adr/ADR-002-target-style-owned-components.md): **replatform the CareLink PM core to meet the compliance deadline, and wrap the parts Meridian actually owns — portal, telehealth, integration — in a Strangler Fig of small, event-driven, API-first services sitting behind a Zero Trust identity/network layer, provisioned through a shared-services landing zone.** Step 5 turns this sentence into an actual vendor-neutral logical diagram.
+
+## 4. Diagrams
+
+- [`../diagrams/Migration-Strategy-Map.xlsx`](../diagrams/Migration-Strategy-Map.xlsx) — the Section 1.1 table above, color-coded by strategy, plus a reference sheet of the six R definitions.
+- [`../diagrams/target-architecture-style.png`](../diagrams/target-architecture-style.png) — rendered preview of the target-style sketch referenced in Section 3.
+- [`../diagrams/target-architecture-style.drawio`](../diagrams/target-architecture-style.drawio) — editable draw.io/diagrams.net source for the same diagram.

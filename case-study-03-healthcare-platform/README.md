@@ -10,7 +10,7 @@
 | 2. Capabilities required | ✅ Captured within problem statement |
 | 3. Requirements and NFRs | ✅ Done — [`docs/requirements.md`](docs/requirements.md) |
 | Current-state architecture | ✅ Done — [`docs/current-state.md`](docs/current-state.md) |
-| 4. Architecture options and styles | ✅ Done — [`docs/architecture-options-and-styles.md`](docs/architecture-options-and-styles.md), [ADR-001](adr/ADR-001-migration-strategy-carelink-pm-core.md), [ADR-002](adr/ADR-002-target-style-owned-components.md) |
+| 4. Architecture options and styles | ✅ Done — [`docs/architecture-options-and-styles.md`](docs/architecture-options-and-styles.md), [ADR-001](adr/ADR-001-migration-strategy-carelink-pm-core.md), [ADR-002](adr/ADR-002-target-style-owned-components.md), [migration strategy map](diagrams/Migration-Strategy-Map.xlsx), [target style diagram](diagrams/target-architecture-style.png) |
 | 5. Vendor-neutral logical design | ⬜ Next |
 | 6. Azure implementation | ⬜ Not started |
 | 7. AWS implementation | ⬜ Not started |
@@ -30,20 +30,24 @@ case-study-03-healthcare-platform/
 │
 ├── README.md
 ├── docs/
-│   ├── current-state.md        # on-prem architecture, as-is
-│   ├── problem-statement.md    # business problem, drivers, stakeholders
-│   └── requirements.md         # NFRs, requirement/constraint/assumption/risk
+│   ├── current-state.md                   # on-prem architecture, as-is
+│   ├── problem-statement.md               # business problem, drivers, stakeholders
+│   ├── requirements.md                    # NFRs, requirement/constraint/assumption/risk
+│   └── architecture-options-and-styles.md # 6-R migration strategy + target style options
 │
-├── adr/                        # architecture decision records — ADR-001, ADR-002 so far
+├── adr/                         # architecture decision records — ADR-001, ADR-002 so far
 ├── architecture/
-│   ├── context/                # executive context view
+│   ├── context/                 # executive context view
 │   ├── solution/                # solution / physical deployment
-│   ├── network/                # network architecture
+│   ├── network/                 # network architecture
 │   ├── security/                # security architecture
 │   ├── data/                    # data architecture
 │   └── dr/                      # HA/DR architecture
-├── terraform/                  # IaC (populated once a platform is chosen)
-└── diagrams/                   # diagrams-as-code / exported diagrams
+├── terraform/                   # IaC (populated once a platform is chosen)
+└── diagrams/
+    ├── Migration-Strategy-Map.xlsx      # color-coded 6-R map, Step 4
+    ├── target-architecture-style.png    # rendered preview of the Step 4 target-style diagram
+    └── target-architecture-style.drawio # editable draw.io source for the same diagram
 ```
 
 ## Read Next
