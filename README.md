@@ -10,7 +10,7 @@ Companion reference material (principles, frameworks, ADR templates, diagramming
 | --- | --- | --- | --- |
 | 1 | [Global e-commerce platform](case-study-01-ecommerce-platform/) | Seasonal traffic spikes, global customer base — autoscaling, CDN, cost optimization | Not started |
 | 2 | [Banking modernization](case-study-02-banking-modernization/) | Core banking/payments workload — security, resiliency, regulatory reporting | Not started |
-| 3 | [Healthcare platform](case-study-03-healthcare-platform/) | On-premises appointment system, ~2M patients — HIPAA/compliance, HA/DR | **In progress** — current-state architecture, problem statement, and preliminary requirements done |
+| 3 | [Healthcare platform](case-study-03-healthcare-platform/) | On-premises appointment system, ~2M patients — HIPAA/compliance, HA/DR | **In progress** — through Step 4 (architecture options & styles); Step 5 (logical design) next |
 | 4 | [Manufacturing / IoT](case-study-04-manufacturing-iot/) | Device fleet ingesting telemetry at scale — event-driven architecture, data pipelines | Not started |
 | 5 | [Enterprise data and AI platform](case-study-05-enterprise-data-ai/) | Data analytics and AI/RAG — data architecture, FinOps | Not started |
 | 6 | [Hybrid / private-cloud modernization](case-study-06-hybrid-private-cloud/) | Existing data-center estate extending into public cloud via VCF, Azure Arc, or Anthos | Not started |

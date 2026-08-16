@@ -10,7 +10,7 @@
 | 2. Capabilities required | ✅ Captured within problem statement |
 | 3. Requirements and NFRs | ✅ Done — [`docs/requirements.md`](docs/requirements.md) |
 | Current-state architecture | ✅ Done — [`docs/current-state.md`](docs/current-state.md) |
-| 4. Architecture options and styles | ⬜ Next |
+| 4. Architecture options and styles | ✅ Done — [`docs/architecture-options-and-styles.md`](docs/architecture-options-and-styles.md), [ADR-001](adr/ADR-001-migration-strategy-carelink-pm-core.md), [ADR-002](adr/ADR-002-target-style-owned-components.md) |
 | 5. Vendor-neutral logical design | ⬜ Next |
 | 6. Azure implementation | ⬜ Not started |
 | 7. AWS implementation | ⬜ Not started |
@@ -34,7 +34,7 @@ case-study-03-healthcare-platform/
 │   ├── problem-statement.md    # business problem, drivers, stakeholders
 │   └── requirements.md         # NFRs, requirement/constraint/assumption/risk
 │
-├── adr/                        # architecture decision records (populated once design begins)
+├── adr/                        # architecture decision records — ADR-001, ADR-002 so far
 ├── architecture/
 │   ├── context/                # executive context view
 │   ├── solution/                # solution / physical deployment
