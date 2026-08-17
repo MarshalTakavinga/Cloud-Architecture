@@ -2,11 +2,11 @@
 
 **Angle:** An existing data-center estate extending into public cloud via VCF, Azure Arc, or Anthos — the case study most directly relevant to enterprise environments with legacy investment.
 
-Part of the [Cloud Architecture](../README.md) portfolio, following the 13-step case-study pipeline (Section 22.1 of the reference guide).
+Part of the [Cloud Architecture](../README.md) portfolio.
 
 ## Status
 
-| Pipeline Step | Status |
+| Step | Status |
 | --- | --- |
 | 1. Business problem | Not started |
 | 2. Capabilities required | Not started |

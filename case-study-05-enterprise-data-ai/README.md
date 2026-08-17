@@ -1,12 +1,12 @@
 # Case Study 5 of 6: Enterprise Data and AI Platform
 
-**Angle:** Directly relevant to data-analytics and AI/RAG work — strong data-architecture (Section 15) and FinOps (Section 16) angle.
+**Angle:** Directly relevant to data-analytics and AI/RAG work — strong data-architecture and FinOps angle.
 
-Part of the [Cloud Architecture](../README.md) portfolio, following the 13-step case-study pipeline (Section 22.1 of the reference guide).
+Part of the [Cloud Architecture](../README.md) portfolio.
 
 ## Status
 
-| Pipeline Step | Status |
+| Step | Status |
 | --- | --- |
 | 1. Business problem | Not started |
 | 2. Capabilities required | Not started |

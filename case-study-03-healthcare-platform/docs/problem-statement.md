@@ -38,4 +38,4 @@ Meridian Health Network's ability to safely, reliably, and compliantly serve rou
 
 ## 5. What This Problem Statement Does Not Yet Decide
 
-This document establishes the current-state architecture and the business case for change. It deliberately does not yet select a target cloud platform, a migration pattern, or a specific architecture — that follows in the next stages of the case-study pipeline (architecture options and styles, vendor-neutral logical design, platform-specific implementations, the weighted decision matrix, and the migration roadmap with ADRs).
+This document establishes the current-state architecture and the business case for change. It deliberately does not yet select a target cloud platform, a migration pattern, or a specific architecture — that follows in later stages of this case study (architecture options and styles, vendor-neutral logical design, platform-specific implementations, a weighted decision matrix, and a migration roadmap with ADRs).

@@ -1,11 +1,11 @@
 # Architecture Options & Styles — Meridian Health Network
 
-Pipeline Step 4. This step deliberately bundles two *separate* decisions that are easy to conflate — kept apart on purpose, the same way requirement/constraint/assumption are kept apart in Section 7.1:
+This document deliberately separates two decisions that are easy to conflate:
 
-1. **Migration strategy** — *how* do we move each current-state component (the "6 R's")
-2. **Target architecture style** — *what pattern* do we build or evolve toward, once moved (reference guide Section 6)
+1. **Migration strategy** — *how* each current-state component moves
+2. **Target architecture style** — *what pattern* the system evolves toward, once moved
 
-No platform (Azure/AWS/GCP/private) is chosen yet — that's Steps 6–11. This step narrows the option space and states a reasoned leaning, recorded as ADRs, so the logical design in Step 5 has a real foundation instead of guessing.
+No platform (Azure/AWS/GCP/private) is chosen here — that follows in later stages of the case study. This document narrows the option space and states a reasoned position, recorded as ADRs, so the logical design that follows has a real foundation rather than a guess.
 
 ## 1. Migration Strategy — The Six R's
 
@@ -29,14 +29,14 @@ A standard industry framework (AWS, Azure CAF, and Google Cloud all publish a ve
 | Telehealth (third-party video bolt-on) | **Repurchase** | The pain point (separate login, clunky plug-in) is a vendor integration problem, not something worth custom-building. A better-integrated cloud telehealth vendor with a real API/SSO story solves it directly. |
 | LinkEngine (HL7 interface engine) | **Refactor** | Already message-based, which is exactly what makes it a strong candidate to replace with a managed, event-driven integration service — same conceptual job, far better resilience (replay, dead-lettering) than today's point-to-point batch feeds. |
 | On-prem Active Directory | **Replatform** | Extend into hybrid identity (sync to a cloud directory) rather than rebuild identity from scratch — lower risk, and MFA/conditional access requirements can be layered on without a green-field identity project. |
-| Veeam + tape backup/DR | **Replatform** | Same conceptual job (backup, DR), swapped onto cloud-native, immutable, geographically separate storage — directly resolves the RTO/RPO requirement from Step 3. |
+| Veeam + tape backup/DR | **Replatform** | Same conceptual job (backup, DR), swapped onto cloud-native, immutable, geographically separate storage — directly resolves the RTO/RPO requirement in `requirements.md`. |
 | Hub-and-spoke MPLS network | **Retire (phased)** | Once core systems aren't all sitting behind one HQ firewall, the case for expensive per-site MPLS circuits weakens. Realistic as a multi-year phase-out alongside cloud migration, not a day-one cutover — flagged here, not decided. |
 
 Notice what's *not* on this list: a full **Repurchase** of CareLink PM itself (switching PM/EHR vendors). That's a real option — but it's a multi-year, org-wide change-management project orthogonal to the compliance/DR deadline driving this migration. Recorded as a deferred option in ADR-001 below, not silently dropped.
 
 ## 2. Target Architecture Style
 
-Reference guide Section 6 lists the full menu. Applying the same discipline the guide asks for — "be comfortable explaining why you would NOT use the fashionable one" — component by component:
+Evaluated deliberately against each candidate style — including an explicit reason for ruling out the fashionable ones, not just the ones adopted — component by component:
 
 | Style | Verdict for Meridian | Why |
 | --- | --- | --- |
@@ -44,14 +44,14 @@ Reference guide Section 6 lists the full menu. Applying the same discipline the 
 | Modular monolith / bounded services | **Use, selectively** | For the *new* components Meridian owns (portal, telehealth integration, notifications) — a small number of well-bounded services, not a service-per-feature explosion. |
 | Event-driven architecture | **Use** | The HL7 workload is already message-based. An event-driven integration layer (pub/sub) is a natural fit, not a fashionable add-on — it directly buys replay and decoupling that today's synchronous point-to-point feeds don't have. |
 | Serverless | **Use, for bursty pieces** | Patient self-scheduling API calls, appointment-reminder notifications, telehealth session orchestration — spiky, stateless, good serverless fits. **Avoid** for the core clinical database workload, which is latency-sensitive and stateful. |
-| Zero Trust | **Use — as a cross-cutting overlay, not a separate system** | Directly answers the March 2026 incident: the attacker's problem was that VPN access implicitly trusted everything behind it. Zero Trust (verify identity/device/context on every request, not just at the network perimeter) is a requirement now, not a nice-to-have — ties straight back to the MFA requirement in Step 3. |
-| Shared-services / platform engineering | **Use** | Directly answers the "4–6 months per acquired clinic" pain point. A self-service landing-zone pattern (Section 17) turns onboarding a new clinic into "provision against a golden path" instead of bespoke circuit and hardware engineering. |
+| Zero Trust | **Use — as a cross-cutting overlay, not a separate system** | Directly answers the March 2026 incident: the attacker's problem was that VPN access implicitly trusted everything behind it. Zero Trust (verify identity/device/context on every request, not just at the network perimeter) is a requirement now, not a nice-to-have — ties straight back to the MFA requirement in `requirements.md`. |
+| Shared-services / platform engineering | **Use** | Directly answers the "4–6 months per acquired clinic" pain point. A self-service landing-zone pattern turns onboarding a new clinic into "provision against a golden path" instead of bespoke circuit and hardware engineering. |
 | Hub-and-spoke | **Carries forward, reshaped** | Meridian already thinks this way (MPLS hub-and-spoke). The *shape* is familiar and reusable as a cloud networking topology (hub VNet/VPC + spoke per environment); it's the *implementation* that changes, not the mental model. |
-| Data mesh, Lakehouse, CQRS, Event sourcing, Cell-based | **Out of scope, explicitly** | None of these are pulled by an actual requirement from Step 3. Data mesh/lakehouse belong to the future Enterprise Data & AI case study, not this one. Reaching for them here would be exactly the "fashionable pattern with no requirement behind it" the guide warns against. |
+| Data mesh, Lakehouse, CQRS, Event sourcing, Cell-based | **Out of scope, explicitly** | None of these are pulled by an actual requirement in this case study. Data mesh/lakehouse belong to a future Enterprise Data & AI case study, not this one — reaching for them here would be a fashionable pattern with no requirement behind it. |
 
 ## 3. Where This Leaves the Target Direction
 
-A single sentence version, with the full reasoning recorded in [ADR-001](../adr/ADR-001-migration-strategy-carelink-pm-core.md) and [ADR-002](../adr/ADR-002-target-style-owned-components.md): **replatform the CareLink PM core to meet the compliance deadline, and wrap the parts Meridian actually owns — portal, telehealth, integration — in a Strangler Fig of small, event-driven, API-first services sitting behind a Zero Trust identity/network layer, provisioned through a shared-services landing zone.** Step 5 turns this sentence into an actual vendor-neutral logical diagram.
+With the full reasoning recorded in [ADR-001](../adr/ADR-001-migration-strategy-carelink-pm-core.md) and [ADR-002](../adr/ADR-002-target-style-owned-components.md): **replatform the CareLink PM core to meet the compliance deadline, and wrap the parts Meridian actually owns — portal, telehealth, integration — in a Strangler Fig of small, event-driven, API-first services sitting behind a Zero Trust identity/network layer, provisioned through a shared-services landing zone.** This direction carries into the logical design that follows.
 
 ## 4. Diagrams
 

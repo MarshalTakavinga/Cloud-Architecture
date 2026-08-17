@@ -2,11 +2,11 @@
 
 **Angle:** Seasonal traffic spikes, global customer base — strong autoscaling, CDN, and cost-optimization angle.
 
-Part of the [Cloud Architecture](../README.md) portfolio, following the 13-step case-study pipeline (Section 22.1 of the reference guide).
+Part of the [Cloud Architecture](../README.md) portfolio.
 
 ## Status
 
-| Pipeline Step | Status |
+| Step | Status |
 | --- | --- |
 | 1. Business problem | Not started |
 | 2. Capabilities required | Not started |

@@ -1,6 +1,6 @@
 # Preliminary Requirements & NFRs — Meridian Health Network
 
-Captured before any platform or architecture-style decision, per the quality-attribute checklist and NFR discipline in the reference guide (Sections 2.1 and 10). These will be refined once target-state design begins, but should not materially change based on which cloud platform is ultimately chosen.
+Captured before any platform or architecture-style decision. These will be refined once target-state design begins, but should not materially change based on which cloud platform is ultimately chosen.
 
 ## 1. Non-Functional Requirements — First Pass
 
@@ -19,7 +19,7 @@ Captured before any platform or architecture-style decision, per the quality-att
 
 ## 2. Requirement / Constraint / Assumption / Decision / Risk — Kept Explicitly Separate
 
-Per the reference guide's Section 7.1 discipline. No architecture **decisions** are made yet — that intentionally waits for the design stages of the pipeline.
+No architecture **decisions** are made yet — that intentionally waits for the design stages that follow.
 
 | Concept | Statement |
 | --- | --- |
@@ -34,12 +34,12 @@ Per the reference guide's Section 7.1 discipline. No architecture **decisions** 
 | Assumption | The 9-clinic acquisition closes within the next 12 months and its onboarding timeline is a real near-term forcing function, not a hypothetical. |
 | Risk | A rushed, compliance-driven timeline (cyber-insurance renewal) could push toward a platform choice that isn't fully evaluated. |
 | Risk | Legacy CareLink PM thick-client/Citrix delivery model may constrain which target architectures are realistic without an application-layer change. |
-| Mitigation (planned) | Run the full vendor-neutral decision matrix (Section 19 of the reference guide) before committing to a platform, even under time pressure. |
+| Mitigation (planned) | Run a full vendor-neutral decision matrix before committing to a platform, even under time pressure. |
 
 ## 3. Explicitly Out of Scope for This Document
 
-- Target cloud architecture (Azure / AWS / GCP / private) — next stage of the pipeline
-- Migration pattern selection (e.g., rehost vs. replatform vs. Strangler Fig on CareLink PM) — next stage
-- Weighted decision matrix and platform recommendation — next stage
-- Cost modeling and 3–5 year TCO comparison — next stage
+- Target cloud architecture (Azure / AWS / GCP / private) — later stage
+- Migration pattern selection (e.g., rehost vs. replatform vs. Strangler Fig on CareLink PM) — later stage
+- Weighted decision matrix and platform recommendation — later stage
+- Cost modeling and 3–5 year TCO comparison — later stage
 - ADRs — these begin once real decisions are made, not before
