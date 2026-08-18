@@ -10,9 +10,9 @@
 | 2. Capabilities required | Captured within problem statement |
 | 3. Requirements and NFRs | Done — [`docs/requirements.md`](docs/requirements.md) |
 | Current-state architecture | Done — [`docs/current-state.md`](docs/current-state.md), [current-state diagram](diagrams/current-state-architecture.png) |
-| 4. Architecture options and styles | Done — [`docs/architecture-options-and-styles.md`](docs/architecture-options-and-styles.md), [ADR-001](adr/ADR-001-migration-strategy-carelink-pm-core.md), [ADR-002](adr/ADR-002-target-style-owned-components.md), [migration strategy map](diagrams/Migration-Strategy-Map.xlsx), [target style diagram](diagrams/target-architecture-style.png), [detailed ADR-002 diagram](diagrams/target-architecture-style-detail.png) |
+| 4. Architecture options and styles | Done — [`docs/architecture-options-and-styles.md`](docs/architecture-options-and-styles.md), [ADR-001](adr/ADR-001-migration-strategy-carelink-pm-core.md), [ADR-002](adr/ADR-002-target-style-owned-components.md), [migration strategy map](diagrams/Migration-Strategy-Map.xlsx), [detailed ADR-002 diagram](diagrams/target-architecture-style-detail.png) |
 | 5. Vendor-neutral logical design | Done — [`docs/logical-design.md`](docs/logical-design.md), [ADR-003](adr/ADR-003-primary-database-technology.md), [ADR-004](adr/ADR-004-dr-strategy.md), [detailed logical design diagram](diagrams/logical-architecture-detail.png) (components, flows, HA/DR — earlier simpler diagrams superseded, kept for history) |
-| 6. Azure implementation | In progress — [`docs/azure-implementation.md`](docs/azure-implementation.md), [`docs/application-architecture.md`](docs/application-architecture.md), ADR-005 through ADR-011, all sized ([ADR-005](adr/ADR-005-azure-compute-hosting-carelink-pm.md), [ADR-006](adr/ADR-006-azure-database-service.md), [ADR-008](adr/ADR-008-integration-processing-compute.md), [ADR-010](adr/ADR-010-azure-compute-hosting-portal.md), [ADR-011](adr/ADR-011-azure-messaging-platform.md)) — all core Azure resources now have concrete configuration, ready for final review before commit/push, 18 diagrams (platform + per-application, see `diagrams/`) |
+| 6. Azure implementation | Done for this stage — [`docs/azure-implementation.md`](docs/azure-implementation.md), [`docs/application-architecture.md`](docs/application-architecture.md), ADR-005 through ADR-011, all sized ([ADR-005](adr/ADR-005-azure-compute-hosting-carelink-pm.md), [ADR-006](adr/ADR-006-azure-database-service.md), [ADR-008](adr/ADR-008-integration-processing-compute.md), [ADR-010](adr/ADR-010-azure-compute-hosting-portal.md), [ADR-011](adr/ADR-011-azure-messaging-platform.md)) — all core Azure resources sized, DR runbook accounts for the Service Bus Geo-DR in-flight-message gap, 18 diagrams (platform + per-application, see `diagrams/`). Known deferred items: Bicep IaC modules not yet built, cost analysis is Step 13 by design. |
 | 7. AWS implementation | Next |
 | 8. GCP implementation | Not started |
 | 9. Private-cloud implementation | Not started |
@@ -48,8 +48,7 @@ case-study-03-healthcare-platform/
 └── diagrams/
     ├── current-state-architecture.png   # Current-state diagram, hand-reproduced, verified against docs/current-state.md
     ├── Migration-Strategy-Map.xlsx      # color-coded 6-R migration strategy map
-    ├── target-architecture-style.png/.drawio    # Step 4 target-style sketch
-    ├── target-architecture-style-detail.png     # Step 4 detailed ADR-002 diagram, hand-reproduced
+    ├── target-architecture-style-detail.png     # Step 4 detailed ADR-002 diagram, hand-reproduced (current — earlier simple sketch removed)
     ├── logical-architecture.png/.drawio         # Step 5 vendor-neutral component view (superseded, kept for history)
     ├── ha-dr-logical-view.png/.drawio           # Step 5 region/replication view (superseded, kept for history)
     ├── logical-architecture-detail.png          # Step 5 detailed logical design, hand-reproduced (current)
@@ -58,7 +57,7 @@ case-study-03-healthcare-platform/
     ├── network-addressing.png/.dot               # Step 6 subnet/CIDR/NSG plan
     ├── landing-zone.png/.mmd                     # Step 6 management group/subscription hierarchy
     ├── sequence-lab-result.png/.mmd              # Step 6 end-to-end transaction trace
-    ├── dr-failover-runbook.png/.mmd              # Step 6 DR runbook with RTO time budget
+    ├── dr-failover-runbook.png/.mmd              # Step 6 DR runbook with RTO time budget, incl. Service Bus Geo-DR alias failover + reconciliation step
     ├── cicd-pipeline.png/.mmd                    # Step 6 IaC deployment pipeline
     ├── carelink-pm-architecture.png/.dot         # Step 6 CareLink PM hosting architecture
     ├── portal-architecture.png/.dot              # Step 6 Portal hosting architecture

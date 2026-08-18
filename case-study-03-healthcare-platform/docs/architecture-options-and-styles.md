@@ -56,5 +56,4 @@ With the full reasoning recorded in [ADR-001](../adr/ADR-001-migration-strategy-
 ## 4. Diagrams
 
 - [`../diagrams/Migration-Strategy-Map.xlsx`](../diagrams/Migration-Strategy-Map.xlsx) — the Section 1.1 table above, color-coded by strategy, plus a reference sheet of the six R definitions.
-- [`../diagrams/target-architecture-style.png`](../diagrams/target-architecture-style.png) — rendered preview of the target-style sketch referenced in Section 3.
-- [`../diagrams/target-architecture-style.drawio`](../diagrams/target-architecture-style.drawio) — editable draw.io/diagrams.net source for the same diagram.
+- [`../diagrams/target-architecture-style-detail.png`](../diagrams/target-architecture-style-detail.png) — detailed target-style diagram for the direction in Section 3: Strangler Fig services, the Zero Trust cross-cutting overlay, and Telehealth's Repurchase treatment. See [ADR-002](../adr/ADR-002-target-style-owned-components.md). (An earlier, simpler sketch of this diagram has been removed; this is the current version.)
