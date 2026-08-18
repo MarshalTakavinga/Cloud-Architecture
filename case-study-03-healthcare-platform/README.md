@@ -13,7 +13,7 @@
 | 4. Architecture options and styles | Done — [`docs/architecture-options-and-styles.md`](docs/architecture-options-and-styles.md), [ADR-001](adr/ADR-001-migration-strategy-carelink-pm-core.md), [ADR-002](adr/ADR-002-target-style-owned-components.md), [migration strategy map](diagrams/Migration-Strategy-Map.xlsx), [detailed ADR-002 diagram](diagrams/target-architecture-style-detail.png) |
 | 5. Vendor-neutral logical design | Done — [`docs/logical-design.md`](docs/logical-design.md), [ADR-003](adr/ADR-003-primary-database-technology.md), [ADR-004](adr/ADR-004-dr-strategy.md), [detailed logical design diagram](diagrams/logical-architecture-detail.png) (components, flows, HA/DR — earlier simpler diagrams superseded, kept for history) |
 | 6. Azure implementation | Done for this stage — [`docs/azure-implementation.md`](docs/azure-implementation.md), [`docs/application-architecture.md`](docs/application-architecture.md), ADR-005 through ADR-011, all sized ([ADR-005](adr/ADR-005-azure-compute-hosting-carelink-pm.md), [ADR-006](adr/ADR-006-azure-database-service.md), [ADR-008](adr/ADR-008-integration-processing-compute.md), [ADR-010](adr/ADR-010-azure-compute-hosting-portal.md), [ADR-011](adr/ADR-011-azure-messaging-platform.md)) — all core Azure resources sized, DR runbook accounts for the Service Bus Geo-DR in-flight-message gap, 18 diagrams (platform + per-application, see `diagrams/`). Known deferred items: Bicep IaC modules not yet built, cost analysis is Step 13 by design. |
-| 7. AWS implementation | Next |
+| 7. AWS implementation | Done for this stage — [`docs/aws-implementation.md`](docs/aws-implementation.md), [`docs/application-architecture-aws.md`](docs/application-architecture-aws.md), ADR-012 through ADR-018 ([ADR-012](adr/ADR-012-aws-compute-hosting-carelink-pm.md), [ADR-013](adr/ADR-013-aws-database-service.md), [ADR-014](adr/ADR-014-aws-network-topology.md), [ADR-015](adr/ADR-015-aws-integration-processing-compute.md), [ADR-016](adr/ADR-016-aws-patient-identity.md), [ADR-017](adr/ADR-017-aws-compute-hosting-portal.md), [ADR-018](adr/ADR-018-aws-messaging-platform.md)) — mirrors the Azure implementation's rigor and reuses the same requirements.md/current-state.md sizing numbers, with two real platform-specific gaps documented rather than glossed over (RDS Custom's weaker cross-region DR vs. Azure SQL MI, and SNS/SQS's total lack of native cross-region replication vs. Service Bus Geo-DR). 10 diagrams (platform + per-application, see `diagrams/`) — the auto-generated baseline component-view diagrams (CareLink PM, Portal, Telehealth, LinkEngine component views; sequence trace; DR runbook; CI/CD pipeline; DR region view) were intentionally removed as poorly crafted, leaving the addressing/landing-zone/network-topology diagrams plus 7 hand-drawn detail diagrams, one per ADR-012 through ADR-018, each checked against its ADR and the platform docs across one or more review rounds before being pulled in. Replacement diagrams for the removed component views welcome any time, checked with the same rigor. Known deferred items: CloudFormation/CDK IaC modules not yet built, cost analysis is Step 13 by design. |
 | 8. GCP implementation | Not started |
 | 9. Private-cloud implementation | Not started |
 | 10. Decision matrix | Not started |
@@ -34,9 +34,11 @@ case-study-03-healthcare-platform/
 │   ├── architecture-options-and-styles.md # 6-R migration strategy + target style options
 │   ├── logical-design.md                  # vendor-neutral logical architecture + HA/DR view
 │   ├── azure-implementation.md            # Azure service mapping, network, security, DR, IaC
-│   └── application-architecture.md        # per-app hosting, DB connectivity, public/private, scaling/HA
+│   ├── application-architecture.md        # per-app hosting, DB connectivity, public/private, scaling/HA (Azure)
+│   ├── aws-implementation.md              # AWS service mapping, network, security, DR, IaC
+│   └── application-architecture-aws.md    # per-app hosting, DB connectivity, public/private, scaling/HA (AWS)
 │
-├── adr/                         # architecture decision records — ADR-001 through ADR-011 so far
+├── adr/                         # architecture decision records — ADR-001 through ADR-018 so far
 ├── architecture/
 │   ├── context/                 # executive context view
 │   ├── solution/                # solution / physical deployment
@@ -69,5 +71,15 @@ case-study-03-healthcare-platform/
     ├── linkengine-functions-hosting-architecture.png  # Step 6 LinkEngine Functions sizing/hosting detail (ADR-008), hand-reproduced
     ├── patient-identity-architecture.png          # Step 6 two-tenant identity architecture (ADR-009), hand-reproduced
     ├── portal-hosting-architecture.png            # Step 6 Portal sizing/hosting detail incl. Front Door (ADR-010), hand-reproduced
-    └── servicebus-linkengine-messaging-architecture.png  # Step 6 Service Bus messaging detail incl. Geo-DR gap note (ADR-011), hand-reproduced
+    ├── servicebus-linkengine-messaging-architecture.png  # Step 6 Service Bus messaging detail incl. Geo-DR gap note (ADR-011), hand-reproduced
+    ├── aws-deployment-architecture.png            # Step 7 consolidated one-page AWS overview, hand-corrected (2 review rounds)
+    ├── aws-network-addressing.png/.dot            # Step 7 VPC/subnet/CIDR/security-group plan
+    ├── aws-landing-zone.png/.mmd                  # Step 7 AWS Organizations OU/account hierarchy (8 workload/network accounts)
+    ├── aws-network-topology-hub-spoke.png         # Step 7 network topology detail (ADR-014), hand-reproduced, account/VPC layout across both regions
+    ├── carelink-pm-hosting-architecture-aws.png   # Step 7 CareLink PM sizing/hosting detail (ADR-012), hand-reproduced
+    ├── sql-managed-instance-architecture-aws.png  # Step 7 RDS Custom zone/DR/network detail (ADR-013), hand-reproduced
+    ├── linkengine-functions-hosting-architecture-aws.png  # Step 7 LinkEngine Lambda sizing/hosting detail (ADR-015), hand-reproduced
+    ├── patient-identity-architecture-aws.png      # Step 7 two-identity-provider architecture (ADR-016), hand-reproduced, incl. IAM Identity Center SSO hop and private-path RDS access (2 review rounds)
+    ├── portal-hosting-architecture-aws.png        # Step 7 Portal sizing/hosting detail incl. CloudFront (ADR-017), hand-reproduced
+    └── sns-sqs-linkengine-messaging-architecture-aws.png  # Step 7 SNS/SQS messaging detail incl. Publish Function ingest path (ADR-018), hand-reproduced
 ```
