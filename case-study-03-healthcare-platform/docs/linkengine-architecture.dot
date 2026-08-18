@@ -1,0 +1,82 @@
+digraph LinkEngineArchitecture {
+  rankdir=LR;
+  bgcolor="white";
+  fontname="Helvetica";
+  nodesep=0.6;
+  ranksep=0.9;
+  node [fontname="Helvetica", fontsize=10, shape=plaintext];
+  edge [fontname="Helvetica", fontsize=9, color="#555555"];
+
+  labelloc="t";
+  label="LinkEngine (Integration / Event Bus) -- Message Flow Architecture\nRefactor (ADR-002) -- Azure Service Bus + Azure Functions (ADR-008)";
+  fontsize=15;
+
+  subgraph cluster_external {
+    label="EXTERNAL SYSTEMS";
+    style="filled,dashed"; fillcolor="#EEEEEE"; color="#888888"; fontcolor="#555555"; fontsize=11;
+    ext [shape=box, style="rounded,filled", fillcolor="#FFFFFF", color="#888888",
+      label="LabCorp / Quest /\nHospital PACS / Surescripts"];
+  }
+
+  apim [label=<
+    <TABLE BORDER="0" CELLBORDER="0" CELLSPACING="2">
+      <TR><TD WIDTH="55" HEIGHT="55" FIXEDSIZE="TRUE"><IMG SRC="az-icons/apim.png" SCALE="TRUE"/></TD></TR>
+      <TR><TD><FONT POINT-SIZE="9">Azure API Management --<BR/>validates cert/key,<BR/>rate limits, single ingress</FONT></TD></TR>
+    </TABLE>
+  >];
+
+  subgraph cluster_appspoke {
+    label="APPLICATION SPOKE VNET";
+    style="filled"; fillcolor="#EAF6EC"; color="#38761D"; fontcolor="#274E13"; fontsize=11;
+
+    sb [label=<
+      <TABLE BORDER="0" CELLBORDER="0" CELLSPACING="2">
+        <TR><TD WIDTH="55" HEIGHT="55" FIXEDSIZE="TRUE"><IMG SRC="az-icons/svcbus.png" SCALE="TRUE"/></TD></TR>
+        <TR><TD><FONT POINT-SIZE="9">Azure Service Bus, Premium<BR/>topics: lab-results, imaging,<BR/>e-prescribing, appointment-events<BR/>each with dead-letter + sessions</FONT></TD></TR>
+      </TABLE>
+    >];
+
+    func [label=<
+      <TABLE BORDER="0" CELLBORDER="0" CELLSPACING="2">
+        <TR><TD WIDTH="55" HEIGHT="55" FIXEDSIZE="TRUE"><IMG SRC="az-icons/functions.png" SCALE="TRUE"/></TD></TR>
+        <TR><TD><FONT POINT-SIZE="9">Azure Functions, Premium plan<BR/>VNet-integrated, zone-redundant<BR/>one function app per topic,<BR/>subscriber / integration worker<BR/>(see ADR-008 -- not on Citrix VMs)</FONT></TD></TR>
+      </TABLE>
+    >];
+  }
+
+  subgraph cluster_dataspoke {
+    label="DATA SPOKE VNET";
+    style="filled"; fillcolor="#FDF2E9"; color="#B45F06"; fontcolor="#7F4C0A"; fontsize=11;
+    sqlmi [label=<
+      <TABLE BORDER="0" CELLBORDER="0" CELLSPACING="2">
+        <TR><TD WIDTH="50" HEIGHT="50" FIXEDSIZE="TRUE"><IMG SRC="az-icons/sqlmi.png" SCALE="TRUE"/></TD></TR>
+        <TR><TD><FONT POINT-SIZE="9">SQL Managed Instance --<BR/>structured result written<BR/>to patient record</FONT></TD></TR>
+      </TABLE>
+    >];
+    blob [label=<
+      <TABLE BORDER="0" CELLBORDER="0" CELLSPACING="2">
+        <TR><TD WIDTH="50" HEIGHT="50" FIXEDSIZE="TRUE"><IMG SRC="az-icons/blob.png" SCALE="TRUE"/></TD></TR>
+        <TR><TD><FONT POINT-SIZE="9">Blob Storage --<BR/>raw HL7 payload,<BR/>immutable archive</FONT></TD></TR>
+      </TABLE>
+    >];
+  }
+
+  law [label=<
+    <TABLE BORDER="0" CELLBORDER="0" CELLSPACING="2">
+      <TR><TD WIDTH="45" HEIGHT="45" FIXEDSIZE="TRUE"><IMG SRC="az-icons/law.png" SCALE="TRUE"/></TD></TR>
+      <TR><TD><FONT POINT-SIZE="8">Dead-letter queue<BR/>depth alert -&gt;<BR/>Log Analytics</FONT></TD></TR>
+    </TABLE>
+  >];
+
+  ext -> apim [label="  HL7 v2 / API, mutual TLS  "];
+  apim -> sb [label="  publish, session ID = patient ID  "];
+  sb -> func [label="  deliver (session-ordered)  "];
+  func -> sqlmi [label="  write, private endpoint  "];
+  func -> blob [label="  archive, WORM  "];
+  func -> sb [label="  complete message  ", style=dashed, color="#38761D"];
+  sb -> law [label="  dead-letter after\n  max delivery count  ", style=dashed, color="#A61C00"];
+
+  note [shape=note, style=filled, fillcolor="#FFF2CC", color="#B45F06", fontsize=9,
+    label="Why Functions and not the Citrix VMs (ADR-008): Citrix VDAs are sized and\nautoscaled for interactive clinical sessions -- piling background message\nprocessing onto them would couple two workloads with very different load\nprofiles. Functions scale independently, per topic, on message volume."];
+  func -> note [style=invis];
+}

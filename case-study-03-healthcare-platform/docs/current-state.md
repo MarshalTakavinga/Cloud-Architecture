@@ -1,5 +1,7 @@
 # Current-State Architecture — Meridian Health Network
 
+See [`../diagrams/current-state-architecture.png`](../diagrams/current-state-architecture.png) for the full current-state diagram — organization profile, application stack, infrastructure, network architecture, identity/security posture, HA/DR posture, and the operational incidents driving this migration, all in one hand-reproduced, verified-against-this-document view.
+
 ## 1. Organization Profile
 
 **Meridian Health Network** is a fictional, composite mid-size regional health system headquartered in Independence, Ohio, built as a realistic stand-in for the kind of organization that actually carries this exact migration problem. It was founded in 1987 as a three-physician family practice and grew through three decades of independent-practice acquisitions across Cuyahoga, Summit, and Stark counties.

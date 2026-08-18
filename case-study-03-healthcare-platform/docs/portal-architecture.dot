@@ -1,0 +1,79 @@
+digraph PortalArchitecture {
+  rankdir=LR;
+  bgcolor="white";
+  fontname="Helvetica";
+  nodesep=0.6;
+  ranksep=0.9;
+  node [fontname="Helvetica", fontsize=10, shape=plaintext];
+  edge [fontname="Helvetica", fontsize=9, color="#555555"];
+
+  labelloc="t";
+  label="MeridianConnect Portal -- Hosting Architecture\nRefactor (ADR-002) -- Azure SQL Managed Instance (ADR-006)";
+  fontsize=15;
+
+  patient [shape=box, style="rounded,filled", fillcolor="#FFFFFF", color="#888888", label="Patient\n(public internet, own device)"];
+  provider [shape=box, style="rounded,filled", fillcolor="#FFFFFF", color="#888888", label="Provider / Staff\n(public internet, browser)"];
+
+  fd [label=<
+    <TABLE BORDER="0" CELLBORDER="0" CELLSPACING="2">
+      <TR><TD WIDTH="60" HEIGHT="60" FIXEDSIZE="TRUE"><IMG SRC="az-icons/frontdoor.png" SCALE="TRUE"/></TD></TR>
+      <TR><TD><FONT POINT-SIZE="10">Azure Front Door Premium<BR/>WAF (OWASP ruleset)<BR/>Private Link origin to App Service</FONT></TD></TR>
+    </TABLE>
+  >];
+
+  subgraph cluster_appspoke {
+    label="APPLICATION SPOKE VNET -- snet-appsvc (10.20.2.0/24)\nApp Service: no public inbound except via Front Door Private Link";
+    style="filled"; fillcolor="#EAF6EC"; color="#38761D"; fontcolor="#274E13"; fontsize=11;
+
+    appsvc [label=<
+      <TABLE BORDER="0" CELLBORDER="0" CELLSPACING="2">
+        <TR><TD WIDTH="60" HEIGHT="60" FIXEDSIZE="TRUE"><IMG SRC="az-icons/appservice.png" SCALE="TRUE"/></TD></TR>
+        <TR><TD><FONT POINT-SIZE="10">App Service, Premium v3 (Linux)<BR/>zone-redundant, regional VNet-integrated<BR/>autoscale 3-10 instances (CPU / queue depth)</FONT></TD></TR>
+      </TABLE>
+    >];
+  }
+
+  adb2c [label=<
+    <TABLE BORDER="0" CELLBORDER="0" CELLSPACING="2">
+      <TR><TD WIDTH="55" HEIGHT="55" FIXEDSIZE="TRUE"><IMG SRC="az-icons/adb2c.png" SCALE="TRUE"/></TD></TR>
+      <TR><TD><FONT POINT-SIZE="9">Microsoft Entra External ID<BR/>(patient identity -- consumer,<BR/>not in corporate directory)</FONT></TD></TR>
+    </TABLE>
+  >];
+
+  entra [label=<
+    <TABLE BORDER="0" CELLBORDER="0" CELLSPACING="2">
+      <TR><TD WIDTH="55" HEIGHT="55" FIXEDSIZE="TRUE"><IMG SRC="az-icons/entra.png" SCALE="TRUE"/></TD></TR>
+      <TR><TD><FONT POINT-SIZE="9">Microsoft Entra ID<BR/>(staff/provider identity --<BR/>Conditional Access, MFA)</FONT></TD></TR>
+    </TABLE>
+  >];
+
+  kv [label=<
+    <TABLE BORDER="0" CELLBORDER="0" CELLSPACING="2">
+      <TR><TD WIDTH="50" HEIGHT="50" FIXEDSIZE="TRUE"><IMG SRC="az-icons/kv.png" SCALE="TRUE"/></TD></TR>
+      <TR><TD><FONT POINT-SIZE="9">Key Vault --<BR/>DB connection string<BR/>via managed identity<BR/>(Key Vault reference,<BR/>no secret in app settings)</FONT></TD></TR>
+    </TABLE>
+  >];
+
+  subgraph cluster_dataspoke {
+    label="DATA SPOKE VNET -- snet-sqlmi (10.30.1.0/24)";
+    style="filled"; fillcolor="#FDF2E9"; color="#B45F06"; fontcolor="#7F4C0A"; fontsize=11;
+    sqlmi [label=<
+      <TABLE BORDER="0" CELLBORDER="0" CELLSPACING="2">
+        <TR><TD WIDTH="60" HEIGHT="60" FIXEDSIZE="TRUE"><IMG SRC="az-icons/sqlmi.png" SCALE="TRUE"/></TD></TR>
+        <TR><TD><FONT POINT-SIZE="10">Azure SQL Managed Instance<BR/>same instance as CareLink PM,<BR/>separate database</FONT></TD></TR>
+      </TABLE>
+    >];
+  }
+
+  patient -> fd [label="  HTTPS 443  "];
+  provider -> fd [label="  HTTPS 443  "];
+  fd -> appsvc [label="  Private Link\n  (no public path)  "];
+  appsvc -> adb2c [label="  OIDC redirect\n  (patient login)  ", style=dashed, color="#7F4C0A"];
+  appsvc -> entra [label="  OIDC redirect\n  (staff login)  ", style=dashed, color="#5B2C87"];
+  appsvc -> sqlmi [label="  private endpoint,\n  TDS 1433, TLS  "];
+  kv -> appsvc [style=dotted, color="#5B2C87", dir=none];
+
+  note [shape=note, style=filled, fillcolor="#FFF2CC", color="#B45F06", fontsize=9,
+    label="Patients and staff are two different identity populations on purpose:\npatients are external consumers (Entra External ID), staff are the\nexisting hybrid-AD workforce (Entra ID, Conditional Access, MFA).\nScaling/HA: zone-redundant Premium v3 plan spreads instances across\navailability zones automatically; Front Door failover to DR region on\nhealth-probe failure."];
+  sqlmi -> note [style=invis];
+}

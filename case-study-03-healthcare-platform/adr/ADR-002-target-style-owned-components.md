@@ -18,3 +18,5 @@ Full microservices is a poor match for a 16-person infrastructure team with no c
 Event-driven integration introduces eventual consistency and message-ordering considerations CareLink PM's synchronous point-to-point calls didn't have, and requires operational skills (event-broker monitoring, dead-letter handling) the team doesn't currently hold — a real training/staffing cost that has to be planned for, not assumed away.
 
 **Status:** Proposed
+
+See [`../diagrams/target-architecture-style-detail.png`](../diagrams/target-architecture-style-detail.png) for the detailed target-style diagram — Strangler Fig services, the Zero Trust cross-cutting overlay, and Telehealth's Repurchase treatment (distinct from Portal/LinkEngine's Refactor treatment — see `application-architecture.md` §3).

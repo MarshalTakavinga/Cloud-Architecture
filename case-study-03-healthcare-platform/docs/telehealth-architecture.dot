@@ -1,0 +1,62 @@
+digraph TelehealthArchitecture {
+  rankdir=LR;
+  bgcolor="white";
+  fontname="Helvetica";
+  nodesep=0.6;
+  ranksep=0.9;
+  node [fontname="Helvetica", fontsize=10, shape=plaintext];
+  edge [fontname="Helvetica", fontsize=9, color="#555555"];
+
+  labelloc="t";
+  label="Telehealth Service -- Integration Architecture\nRepurchase (ADR-002) -- vendor-hosted, no Meridian compute";
+  fontsize=15;
+
+  patient [shape=box, style="rounded,filled", fillcolor="#FFFFFF", color="#888888", label="Patient\n(public internet, own device)"];
+  provider [shape=box, style="rounded,filled", fillcolor="#FFFFFF", color="#888888", label="Provider\n(public internet, browser)"];
+
+  subgraph cluster_vendor {
+    label="TELEHEALTH VENDOR -- third-party SaaS (outside Meridian's Azure tenant)";
+    style="filled,dashed"; fillcolor="#FFF2CC"; color="#B45F06"; fontcolor="#7F4C0A"; fontsize=11;
+    vendor [label=<
+      <TABLE BORDER="0" CELLBORDER="0" CELLSPACING="2">
+        <TR><TD><FONT POINT-SIZE="10">Video/call platform +<BR/>scheduling webhook API<BR/>(vendor's own infrastructure,<BR/>not Meridian's responsibility)</FONT></TD></TR>
+      </TABLE>
+    >];
+  }
+
+  entra [label=<
+    <TABLE BORDER="0" CELLBORDER="0" CELLSPACING="2">
+      <TR><TD WIDTH="55" HEIGHT="55" FIXEDSIZE="TRUE"><IMG SRC="az-icons/entra.png" SCALE="TRUE"/></TD></TR>
+      <TR><TD><FONT POINT-SIZE="9">Microsoft Entra ID --<BR/>Meridian is the SAML/OIDC<BR/>Identity Provider</FONT></TD></TR>
+    </TABLE>
+  >];
+
+  apim [label=<
+    <TABLE BORDER="0" CELLBORDER="0" CELLSPACING="2">
+      <TR><TD WIDTH="55" HEIGHT="55" FIXEDSIZE="TRUE"><IMG SRC="az-icons/apim.png" SCALE="TRUE"/></TD></TR>
+      <TR><TD><FONT POINT-SIZE="9">Azure API Management --<BR/>brokers appointment sync API calls<BR/>and inbound webhooks only<BR/>(not media/video traffic)</FONT></TD></TR>
+    </TABLE>
+  >];
+
+  kv [label=<
+    <TABLE BORDER="0" CELLBORDER="0" CELLSPACING="2">
+      <TR><TD WIDTH="45" HEIGHT="45" FIXEDSIZE="TRUE"><IMG SRC="az-icons/kv.png" SCALE="TRUE"/></TD></TR>
+      <TR><TD><FONT POINT-SIZE="8">Key Vault --<BR/>vendor API<BR/>client secret</FONT></TD></TR>
+    </TABLE>
+  >];
+
+  portal [shape=box, style="rounded,filled", fillcolor="#D9EAD3", color="#38761D", label="MeridianConnect Portal\n(launches session via\nvendor SDK / deep link)"];
+
+  patient -> vendor [label="  video/audio media\n  (direct, real-time -- never proxied\n  through Meridian's network)  ", color="#B45F06"];
+  provider -> vendor [style=invis];
+  provider -> portal [label="  opens visit  "];
+  portal -> vendor [label="  launch session (SDK)  "];
+  vendor -> entra [label="  SAML/OIDC SSO --\n  no separate telehealth password  ", style=dashed, color="#5B2C87"];
+  vendor -> apim [label="  webhook: appointment\n  status change  ", style=dashed];
+  apim -> vendor [label="  API: schedule/reschedule  ", style=dashed];
+  kv -> apim [style=dotted, color="#5B2C87", dir=none];
+
+  note [shape=note, style=filled, fillcolor="#FFF2CC", color="#B45F06", fontsize=9,
+    label="No Meridian-hosted compute for this component -- the whole point of\nRepurchase. Real-time video is bandwidth/latency-sensitive, so it goes\ndirect device-to-vendor, not through Meridian's VNet or Front Door.\nOnly control-plane traffic (SSO, appointment sync) touches Meridian's Azure."];
+  vendor -> note [style=invis];
+}

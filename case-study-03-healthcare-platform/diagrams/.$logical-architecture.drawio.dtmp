@@ -1,0 +1,97 @@
+<mxfile host="Electron">
+  <diagram name="Logical Architecture - Step 5" id="step5-logical-architecture">
+    <mxGraphModel dx="1178" dy="729" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1240" pageHeight="820" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" parent="1" style="text;html=1;align=center;verticalAlign=middle;fontSize=16;fontStyle=1;" value="Meridian Health Network -- Vendor-Neutral Logical Architecture&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;Component view -- no platform selected yet&lt;/font&gt;" vertex="1">
+          <mxGeometry height="50" width="600" x="330" as="geometry" />
+        </mxCell>
+        <mxCell id="patients" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#888888;" value="Patients / Referring Providers" vertex="1">
+          <mxGeometry height="50" width="220" x="40" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="ccBoundary" parent="1" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;strokeColor=#666666;fillColor=none;verticalAlign=top;align=center;fontColor=#666666;fontSize=11;" value="CROSS-CUTTING" vertex="1">
+          <mxGeometry height="100" width="460" x="360" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="logging" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FCE5CD;strokeColor=#B45F06;" value="Centralized Logging&lt;br&gt;(audit, SIEM-equivalent)" vertex="1">
+          <mxGeometry height="55" width="200" x="380" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="secrets" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FCE5CD;strokeColor=#B45F06;" value="Secrets Manager" vertex="1">
+          <mxGeometry height="55" width="200" x="600" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="identity" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E0D6F5;strokeColor=#5B2C87;" value="Identity Provider (hybrid)&lt;br&gt;MFA + conditional access" vertex="1">
+          <mxGeometry height="55" width="220" x="40" y="180" as="geometry" />
+        </mxCell>
+        <mxCell id="ztBoundary" parent="1" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;dashPattern=8 4;strokeColor=#B8860B;fillColor=none;verticalAlign=top;align=left;spacingLeft=10;spacingTop=6;fontColor=#B8860B;fontSize=11;" value="ZERO TRUST BOUNDARY -- verify identity, device, context on every call" vertex="1">
+          <mxGeometry height="380" width="900" x="20" y="270" as="geometry" />
+        </mxCell>
+        <mxCell id="gateway" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DCEBFC;strokeColor=#2E6DA4;" value="API Gateway&lt;br&gt;(validates auth on every call)" vertex="1">
+          <mxGeometry height="55" width="280" x="330" y="310" as="geometry" />
+        </mxCell>
+        <mxCell id="portal" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D9EAD3;strokeColor=#38761D;" value="Portal Service&lt;br&gt;&lt;b&gt;Refactor&lt;/b&gt;" vertex="1">
+          <mxGeometry height="70" width="170" x="60" y="420" as="geometry" />
+        </mxCell>
+        <mxCell id="telehealth" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF2CC;strokeColor=#B45F06;" value="Telehealth Service&lt;br&gt;&lt;b&gt;Repurchase&lt;/b&gt;" vertex="1">
+          <mxGeometry height="70" width="180" x="260" y="420" as="geometry" />
+        </mxCell>
+        <mxCell id="corep" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F4CCCC;strokeColor=#A61C00;" value="Core PM Service&lt;br&gt;(CareLink PM)&lt;br&gt;&lt;b&gt;Replatform&lt;/b&gt;" vertex="1">
+          <mxGeometry height="70" width="200" x="470" y="420" as="geometry" />
+        </mxCell>
+        <mxCell id="bus" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DCEBFC;strokeColor=#2E6DA4;" value="Event / Integration Bus&lt;br&gt;(pub/sub, replay, dead-letter)" vertex="1">
+          <mxGeometry height="70" width="220" x="700" y="420" as="geometry" />
+        </mxCell>
+        <mxCell id="primarydb" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F9CB9C;strokeColor=#B45F06;" value="Primary Relational Database&lt;br&gt;(managed, ACID)" vertex="1">
+          <mxGeometry height="70" width="200" x="470" y="540" as="geometry" />
+        </mxCell>
+        <mxCell id="objstore" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#CFE2F3;strokeColor=#0B5394;" value="Object / Blob Storage&lt;br&gt;(immutable backups, imaging)" vertex="1">
+          <mxGeometry height="70" width="220" x="700" y="540" as="geometry" />
+        </mxCell>
+        <mxCell id="external" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EEEEEE;strokeColor=#888888;" value="LabCorp / Quest / Hospital PACS / Surescripts&lt;br&gt;(external systems)" vertex="1">
+          <mxGeometry height="70" width="260" x="960" y="540" as="geometry" />
+        </mxCell>
+        <mxCell id="platform" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EAD1F7;strokeColor=#674EA7;" value="Shared-Services / Landing Zone  +  Hub-and-Spoke Network&lt;br&gt;identity, policy, and network foundation new clinics provision against" vertex="1">
+          <mxGeometry height="60" width="600" x="380" y="700" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" edge="1" parent="1" source="patients" style="html=1;endArrow=block;" target="identity" value="authenticates">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="identity" style="html=1;endArrow=block;" target="gateway" value="issues token">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="gateway" style="html=1;endArrow=block;" target="portal">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="gateway" style="html=1;endArrow=block;" target="telehealth">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="gateway" style="html=1;endArrow=block;" target="corep">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="gateway" style="html=1;endArrow=block;startArrow=block;" target="bus" value="events">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="corep" style="html=1;endArrow=block;" target="primarydb">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e8" edge="1" parent="1" source="bus" style="html=1;endArrow=block;dashed=1;" target="objstore">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e9" edge="1" parent="1" source="bus" style="html=1;endArrow=block;" target="external" value="HL7 / API events">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e10" edge="1" parent="1" source="logging" style="html=1;endArrow=none;dashed=1;strokeColor=#B45F06;" target="gateway">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e11" edge="1" parent="1" source="secrets" style="html=1;endArrow=none;dashed=1;strokeColor=#B45F06;" target="gateway">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e12" edge="1" parent="1" source="primarydb" style="html=1;endArrow=block;dashed=1;strokeColor=#674EA7;" target="platform">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e13" edge="1" parent="1" source="objstore" style="html=1;endArrow=block;dashed=1;strokeColor=#674EA7;" target="platform">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

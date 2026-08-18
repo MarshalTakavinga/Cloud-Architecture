@@ -1,0 +1,90 @@
+digraph CareLinkPM {
+  rankdir=LR;
+  bgcolor="white";
+  fontname="Helvetica";
+  nodesep=0.6;
+  ranksep=0.9;
+  node [fontname="Helvetica", fontsize=10, shape=plaintext];
+  edge [fontname="Helvetica", fontsize=9, color="#555555"];
+
+  labelloc="t";
+  label="CareLink PM (Core PM Service) -- Hosting Architecture\nReplatform (ADR-001, ADR-005) -- Azure SQL Managed Instance (ADR-006)";
+  fontsize=15;
+
+  provider [shape=box, style="rounded,filled", fillcolor="#FFFFFF", color="#888888", label="Provider / Clinical Staff\n(clinic workstation or laptop)"];
+
+  subgraph cluster_citrixcloud {
+    label="CITRIX CLOUD -- SaaS control plane (not Meridian's Azure tenant)";
+    style="filled,dashed"; fillcolor="#F5F5F5"; color="#666666"; fontcolor="#444444"; fontsize=11;
+    gateway [label=<
+      <TABLE BORDER="0" CELLBORDER="0" CELLSPACING="2">
+        <TR><TD><FONT POINT-SIZE="10">Citrix Gateway Service +<BR/>Session Broker<BR/>(brokers session, no direct<BR/>network path to VDAs)</FONT></TD></TR>
+      </TABLE>
+    >];
+  }
+
+  subgraph cluster_appspoke {
+    label="APPLICATION SPOKE VNET -- snet-citrix (10.20.3.0/24), private only, no public IP";
+    style="filled"; fillcolor="#EAF6EC"; color="#38761D"; fontcolor="#274E13"; fontsize=11;
+
+    cc [label=<
+      <TABLE BORDER="0" CELLBORDER="0" CELLSPACING="2">
+        <TR><TD WIDTH="60" HEIGHT="60" FIXEDSIZE="TRUE"><IMG SRC="az-icons/citrix.png" SCALE="TRUE"/></TD></TR>
+        <TR><TD><FONT POINT-SIZE="10">Cloud Connectors x2<BR/>(one per zone, min)<BR/>bridge Citrix Cloud &lt;-&gt; Azure</FONT></TD></TR>
+      </TABLE>
+    >];
+
+    subgraph cluster_catalog {
+      label="Machine Catalog -- zone-redundant";
+      style="filled"; fillcolor="#D9EAD3"; color="#38761D"; fontsize=10;
+      vda1 [label=<
+        <TABLE BORDER="0" CELLBORDER="0" CELLSPACING="2">
+          <TR><TD WIDTH="56" HEIGHT="56" FIXEDSIZE="TRUE"><IMG SRC="az-icons/citrix.png" SCALE="TRUE"/></TD></TR>
+          <TR><TD><FONT POINT-SIZE="9">VDA session hosts<BR/>Zone 1 (2x Dsv5)</FONT></TD></TR>
+        </TABLE>
+      >];
+      vda2 [label=<
+        <TABLE BORDER="0" CELLBORDER="0" CELLSPACING="2">
+          <TR><TD WIDTH="56" HEIGHT="56" FIXEDSIZE="TRUE"><IMG SRC="az-icons/citrix.png" SCALE="TRUE"/></TD></TR>
+          <TR><TD><FONT POINT-SIZE="9">VDA session hosts<BR/>Zone 2 (2x Dsv5)</FONT></TD></TR>
+        </TABLE>
+      >];
+      vda3 [label=<
+        <TABLE BORDER="0" CELLBORDER="0" CELLSPACING="2">
+          <TR><TD WIDTH="56" HEIGHT="56" FIXEDSIZE="TRUE"><IMG SRC="az-icons/citrix.png" SCALE="TRUE"/></TD></TR>
+          <TR><TD><FONT POINT-SIZE="9">VDA session hosts<BR/>Zone 3 (2x Dsv5)</FONT></TD></TR>
+        </TABLE>
+      >];
+    }
+  }
+
+  subgraph cluster_dataspoke {
+    label="DATA SPOKE VNET -- snet-sqlmi (10.30.1.0/24)";
+    style="filled"; fillcolor="#FDF2E9"; color="#B45F06"; fontcolor="#7F4C0A"; fontsize=11;
+    sqlmi [label=<
+      <TABLE BORDER="0" CELLBORDER="0" CELLSPACING="2">
+        <TR><TD WIDTH="60" HEIGHT="60" FIXEDSIZE="TRUE"><IMG SRC="az-icons/sqlmi.png" SCALE="TRUE"/></TD></TR>
+        <TR><TD><FONT POINT-SIZE="10">Azure SQL Managed Instance<BR/>(Business Critical, zone-redundant)<BR/>CareLink PM database</FONT></TD></TR>
+      </TABLE>
+    >];
+  }
+
+  kv [label=<
+    <TABLE BORDER="0" CELLBORDER="0" CELLSPACING="2">
+      <TR><TD WIDTH="50" HEIGHT="50" FIXEDSIZE="TRUE"><IMG SRC="az-icons/kv.png" SCALE="TRUE"/></TD></TR>
+      <TR><TD><FONT POINT-SIZE="9">Key Vault --<BR/>SQL login retrieved<BR/>by VDA at boot<BR/>(managed identity)</FONT></TD></TR>
+    </TABLE>
+  >];
+
+  provider -> gateway [label="  HDX over TLS 443\n  (internet, no VPN needed)  "];
+  gateway -> cc [label="  brokered session\n  (Citrix Cloud-initiated, outbound only from Azure)  ", style=dashed];
+  cc -> vda1 [style=invis];
+  cc -> vda2 [color="#333333"];
+  vda1 -> vda2 -> vda3 [style=invis];
+  vda2 -> sqlmi [label="  TDS 1433, private endpoint,\n  TLS-encrypted  "];
+  kv -> vda2 [style=dotted, color="#5B2C87", dir=none];
+
+  note [shape=note, style=filled, fillcolor="#FFF2CC", color="#B45F06", fontsize=9,
+    label="No public IP anywhere in the app or data spoke.\nAll inbound to VDAs is broker-initiated from Cloud Connectors --\nclinics never open an inbound port to Azure.\nScaling: Citrix autoscale (schedule + load-based) power-manages\nadditional VDAs per zone during clinic hours; HA from >=1 healthy\nzone + Cloud Connector redundancy."];
+  sqlmi -> note [style=invis];
+}

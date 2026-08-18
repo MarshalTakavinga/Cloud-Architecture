@@ -54,5 +54,6 @@ See [ADR-004](../adr/ADR-004-dr-strategy.md) for why warm standby was chosen ove
 
 ## 6. Diagrams
 
-- [`../diagrams/logical-architecture.png`](../diagrams/logical-architecture.png) / [`.drawio`](../diagrams/logical-architecture.drawio) — the component view described in Section 1.
-- [`../diagrams/ha-dr-logical-view.png`](../diagrams/ha-dr-logical-view.png) / [`.drawio`](../diagrams/ha-dr-logical-view.drawio) — the region/replication view described in Section 3.
+- [`../diagrams/logical-architecture-detail.png`](../diagrams/logical-architecture-detail.png) — the primary diagram for this stage: logical components (Section 1), the full request/event flow through the primary region, both worked data-flow scenarios (Section 2), the secondary-region warm-standby layout and HA/DR table (Section 3), cross-cutting concerns (Section 4), and what's explicitly deferred (Section 5) — all in one hand-reproduced, conflict-checked diagram. Went through several review rounds to get right, including a genuine correctness fix: the Event/Integration Bus never talks to the Primary Relational Database directly — all reads/writes happen through the Core PM Service, called out explicitly on the diagram itself.
+- [`../diagrams/logical-architecture.png`](../diagrams/logical-architecture.png) / [`.drawio`](../diagrams/logical-architecture.drawio) — earlier, simpler component-view sketch. Superseded by the diagram above; kept for history.
+- [`../diagrams/ha-dr-logical-view.png`](../diagrams/ha-dr-logical-view.png) / [`.drawio`](../diagrams/ha-dr-logical-view.drawio) — earlier, simpler region/replication sketch. The HA/DR table and secondary-region layout are now also covered by the diagram above; a dedicated, more detailed DR diagram is planned to fully replace this one.
