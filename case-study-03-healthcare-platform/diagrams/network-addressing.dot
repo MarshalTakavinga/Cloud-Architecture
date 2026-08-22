@@ -1,0 +1,81 @@
+digraph NetworkAddressing {
+  rankdir=TB;
+  bgcolor="white";
+  fontname="Helvetica";
+  nodesep=0.5;
+  ranksep=0.6;
+  node [fontname="Helvetica", fontsize=10, shape=plaintext];
+  edge [fontname="Helvetica", fontsize=9, color="#555555"];
+
+  labelloc="t";
+  label="Meridian Health Network — Azure Network Addressing Plan (Step 6)\nHub-and-spoke, primary region — see ADR-007";
+  fontsize=16;
+
+  subgraph cluster_hub {
+    label="HUB VNET  --  10.10.0.0/16";
+    style="filled"; fillcolor="#E7F0FA"; color="#2E6DA4"; fontcolor="#1F4E79"; fontsize=12;
+
+    gwsub [shape=box, style="rounded,filled", fillcolor="#FFFFFF", color="#2E6DA4",
+      label=<<B>GatewaySubnet</B><BR/>10.10.0.0/27<BR/>VPN / ExpressRoute Gateway>];
+    fwsub [shape=box, style="rounded,filled", fillcolor="#FFFFFF", color="#2E6DA4",
+      label=<<B>AzureFirewallSubnet</B><BR/>10.10.1.0/26<BR/>Azure Firewall<BR/>(forced-tunnel next hop for spokes)>];
+    bassub [shape=box, style="rounded,filled", fillcolor="#FFFFFF", color="#2E6DA4",
+      label=<<B>AzureBastionSubnet</B><BR/>10.10.2.0/27<BR/>Azure Bastion>];
+  }
+
+  subgraph cluster_app {
+    label="APPLICATION SPOKE VNET  --  10.20.0.0/16  (peered to hub)";
+    style="filled"; fillcolor="#EAF6EC"; color="#38761D"; fontcolor="#274E13"; fontsize=12;
+
+    apimsub [shape=box, style="rounded,filled", fillcolor="#FFFFFF", color="#38761D",
+      label=<<B>snet-apim</B><BR/>10.20.1.0/24<BR/>Azure API Management (VNet-injected)>];
+    appsub [shape=box, style="rounded,filled", fillcolor="#FFFFFF", color="#38761D",
+      label=<<B>snet-appsvc</B><BR/>10.20.2.0/24<BR/>App Service (delegated:<BR/>Microsoft.Web/serverFarms)>];
+    citrixsub [shape=box, style="rounded,filled", fillcolor="#FFFFFF", color="#38761D",
+      label=<<B>snet-citrix</B><BR/>10.20.3.0/24<BR/>Citrix / CareLink PM VMs>];
+    pesub [shape=box, style="rounded,filled", fillcolor="#FFFFFF", color="#38761D",
+      label=<<B>snet-svcbus-pe</B><BR/>10.20.4.0/24<BR/>Service Bus private endpoints>];
+    funcsub [shape=box, style="rounded,filled", fillcolor="#FFFFFF", color="#38761D",
+      label=<<B>snet-func-linkengine</B><BR/>10.20.5.0/24<BR/>Azure Functions Premium plan (delegated:<BR/>Microsoft.Web/serverFarms) -- ADR-008/011>];
+    ccsub [shape=box, style="rounded,filled", fillcolor="#FFFFFF", color="#38761D",
+      label=<<B>snet-cloud-connectors</B><BR/>10.20.6.0/24<BR/>Citrix Cloud Connectors (one per AZ + spare) -- ADR-005>];
+
+    nsg1 [shape=note, style=filled, fillcolor="#FFF2CC", color="#B45F06", fontsize=9,
+      label=<<B>NSG -- snet-appsvc</B><BR/>Allow 443 in from snet-apim only<BR/>Deny all other inbound>];
+    nsg2 [shape=note, style=filled, fillcolor="#FFF2CC", color="#B45F06", fontsize=9,
+      label=<<B>NSG -- snet-citrix</B><BR/>Allow 443 in from snet-apim<BR/>Allow 3389 in from AzureBastionSubnet only<BR/>Deny all other inbound>];
+    nsg4 [shape=note, style=filled, fillcolor="#FFF2CC", color="#B45F06", fontsize=9,
+      label=<<B>NSG -- snet-func-linkengine</B><BR/>Outbound only to snet-svcbus-pe,<BR/>snet-sqlmi, snet-storage-pe<BR/>No inbound from internet>];
+  }
+
+  subgraph cluster_data {
+    label="DATA SPOKE VNET  --  10.30.0.0/16  (peered to hub)";
+    style="filled"; fillcolor="#FDF2E9"; color="#B45F06"; fontcolor="#7F4C0A"; fontsize=12;
+
+    sqlsub [shape=box, style="rounded,filled", fillcolor="#FFFFFF", color="#B45F06",
+      label=<<B>snet-sqlmi</B><BR/>10.30.1.0/24<BR/>SQL Managed Instance (delegated,<BR/>dedicated subnet, no other resources)>];
+    stpesub [shape=box, style="rounded,filled", fillcolor="#FFFFFF", color="#B45F06",
+      label=<<B>snet-storage-pe</B><BR/>10.30.2.0/24<BR/>Blob Storage private endpoints>];
+
+    nsg3 [shape=note, style=filled, fillcolor="#FFF2CC", color="#B45F06", fontsize=9,
+      label=<<B>NSG -- snet-sqlmi</B><BR/>Allow 1433 in from snet-citrix,<BR/>snet-appsvc, snet-func-linkengine only<BR/>Deny all other inbound>];
+  }
+
+  subgraph cluster_dr {
+    label="DR REGION MIRROR (paired region)  --  10.110.0.0/16, 10.120.0.0/16, 10.130.0.0/16\nsame subnet pattern, non-overlapping ranges so networks can peer/route during failover";
+    style="filled,dashed"; fillcolor="#FCEFEF"; color="#A61C00"; fontcolor="#85200C"; fontsize=11;
+    drnote [shape=plaintext, fontsize=10, label="Hub-DR 10.110.0.0/16  |  App Spoke-DR 10.120.0.0/16  |  Data Spoke-DR 10.130.0.0/16"];
+  }
+
+  udr [shape=note, style=filled, fillcolor="#E0D6F5", color="#5B2C87", fontsize=9,
+    label=<<B>UDR on both spokes</B><BR/>0.0.0.0/0 next hop = Azure Firewall<BR/>private IP (10.10.1.4)<BR/>forces all egress through the hub>];
+
+  gwsub -> fwsub [style=invis];
+  fwsub -> bassub [style=invis];
+  apimsub -> appsub -> citrixsub -> pesub -> funcsub -> ccsub [style=invis];
+  sqlsub -> stpesub [style=invis];
+
+  fwsub -> apimsub [label="private, via peering", color="#333333"];
+  apimsub -> sqlsub [label="private endpoint", style=dashed, color="#333333"];
+  udr -> fwsub [style=dashed, color="#5B2C87", constraint=false];
+}

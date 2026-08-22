@@ -1,0 +1,19 @@
+### ADR-035: Migration sequencing model — single-event central-services cutover ahead of phased per-site compute waves
+
+**Context:**
+ADR-034 approved Azure as the target platform. `requirements.md` sets a hard constraint on how the 46 sites get there: "Migration cannot require a single all-46-site cutover weekend — clinical operations cannot tolerate that blast radius." But CareLink PM, per `current-state.md` §2, is **one shared application and database instance published to all 46 sites** — a single 2-node SQL Server 2014 Always On Availability Group, one LinkEngine integration-bus instance handling ~1.1M HL7v2 messages/month for all sites combined, and one MeridianConnect Portal/Telehealth instance serving the entire ~410,000-patient active population. There are not 46 independent per-clinic databases to migrate one at a time. A wave model has to be designed against that reality, not against an assumption of per-site data isolation the actual system doesn't have.
+
+**Options considered:**
+- Phase the database itself per clinic batch — migrate each wave's clinics' data independently, alongside their compute
+- Run indefinite bidirectional (multi-master) replication between the legacy on-prem SQL Server 2014 AAG and the new Azure SQL Managed Instance for the full duration of the program, cutting individual clinics over to whichever side is authoritative for them at the time
+- Cut the shared central services (database, integration bus, portal, telehealth) over once, as a single controlled event early in the program, then phase only the client-facing compute/session-routing layer per site afterward
+
+**Decision:** Cut the shared central services over once (Wave 1 of `migration-roadmap.md`), then phase only the Citrix/CareLink PM compute and session-routing layer across the remaining waves — with both the legacy on-prem Citrix VDA farm and the new Azure-hosted Citrix Cloud Connector fleet authenticating against the same, already-migrated Azure database throughout the transition.
+
+**Rationale:**
+Per-clinic database phasing would require either partitioning CareLink PM's schema — not realistic for a vendor thick-client product Meridian has no source access to (ADR-001) — or building genuine bidirectional multi-master replication between two different database engines for the many months a phased-by-database approach would take, which is materially more complex and riskier than the underlying constraint calls for. The database, the integration bus, and the patient portal are each a single shared instance today; migrating each of them once, carefully, with its own rollback window (ADR-036), and then phasing only the layer that actually is per-site — which clinics' Citrix sessions point at which compute fleet — satisfies the "no big-bang cutover" constraint without inventing complexity the real system doesn't have. It also means every wave after Wave 1 is a low-risk, easily-reversible routing change rather than a data-migration event, materially lowering the risk profile of every wave except the first.
+
+**Trade-off:**
+This concentrates risk into a single event: Wave 1 is the highest-stakes moment in the entire program, because a problem discovered after the central-services cutover affects all 46 not-yet-fully-migrated sites simultaneously, not just one wave's clinics — there is no "roll back just this wave's data." It also requires a temporary, private, low-latency hybrid network circuit between the on-prem HQ network and the Azure landing zone to stay in place and performant for the entire span between Wave 1 and the last site's compute wave, since every site not yet on the new Citrix fleet still depends on it to reach its own data — a real, accepted networking dependency, not an oversight (see `migration-roadmap.md`'s explicit risk section for the mitigation: sequencing the highest-latency-risk sites earlier rather than last).
+
+**Status:** Approved

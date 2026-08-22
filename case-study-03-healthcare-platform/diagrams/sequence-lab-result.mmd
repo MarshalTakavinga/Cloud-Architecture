@@ -1,0 +1,53 @@
+sequenceDiagram
+    autonumber
+    participant Lab as LabCorp<br/>(external lab system)
+    participant APIM as Azure API Management
+    participant SB as Azure Service Bus<br/>(topic: lab-results)
+    participant CLPM as CareLink PM<br/>(integration subscriber,<br/>Citrix VM)
+    participant SQLMI as Azure SQL<br/>Managed Instance
+    participant Blob as Azure Blob Storage<br/>(immutable HL7 archive)
+    participant Ops as On-call / Monitor alert
+    participant Prov as Provider<br/>(CareLink PM client)
+
+    Note over Lab,APIM: Inbound: new lab result for an existing patient
+    Lab->>APIM: POST /lab-results (HL7 v2 payload)<br/>mutual TLS + API key
+    activate APIM
+    APIM->>APIM: validate client cert, API key,<br/>rate-limit policy
+    APIM->>SB: publish message, topic "lab-results"<br/>session ID = patient ID
+    activate SB
+    SB-->>APIM: accepted
+    APIM-->>Lab: 202 Accepted
+    deactivate APIM
+
+    alt happy path
+        SB->>CLPM: deliver message (session-ordered)
+        deactivate SB
+        activate CLPM
+        CLPM->>SQLMI: write structured result to<br/>patient record (private endpoint)
+        activate SQLMI
+        SQLMI-->>CLPM: write acknowledged
+        deactivate SQLMI
+        CLPM->>Blob: archive raw HL7 payload<br/>(WORM, immutable)
+        CLPM->>SB: complete message
+        deactivate CLPM
+    else processing fails (e.g. patient ID not matched)
+        SB->>CLPM: deliver message
+        activate CLPM
+        CLPM--xSB: abandon message
+        deactivate CLPM
+        SB->>SB: retry up to max delivery count
+        SB->>SB: move to dead-letter queue
+        SB->>Ops: dead-letter queue depth alert
+    end
+
+    Note over Lab,Ops: Every hop above ships logs/metrics to<br/>Azure Monitor + Log Analytics (omitted from lanes for clarity)
+
+    Note over Prov,SQLMI: Later: provider opens the chart
+    Prov->>CLPM: open patient chart
+    activate CLPM
+    CLPM->>SQLMI: query patient record
+    activate SQLMI
+    SQLMI-->>CLPM: record incl. new lab result
+    deactivate SQLMI
+    CLPM-->>Prov: render chart with result
+    deactivate CLPM
