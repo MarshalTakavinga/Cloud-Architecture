@@ -1,6 +1,6 @@
 # Current-State Architecture — Solstice Commerce Engine
 
-See [`../diagrams/current-state-architecture.png`](../diagrams/current-state-architecture.png) for the full deployment diagram — hand-drawn, checked against this document across three review rounds (a mislabeled managed-service icon, a VPC-placement fix for the self-managed data stores, and a data-tier duplication fix across the two Availability Zones — see the case study's Step 4/current-state handoff notes for the detail on each).
+See [`../diagrams/current-state-architecture.png`](../diagrams/current-state-architecture.png) for the full deployment diagram.
 
 Grounds each forcing function in `problem-statement.md` with the actual infrastructure behind it. Solstice already runs in the cloud — this is not an on-premises-to-cloud migration story. It migrated to a single AWS region in 2019 as a straight lift-and-shift and has never re-architected since; the point of this case study is a genuine, vendor-neutral re-evaluation across Azure, AWS, and GCP, not an assumption that "already on AWS" settles anything (see `problem-statement.md` §5 and the architecture-options step for why that neutrality matters).
 
