@@ -1,0 +1,47 @@
+digraph TargetArchitectureStyle {
+  rankdir=TB;
+  fontname="Helvetica";
+  labelloc="t";
+  fontsize=18;
+  label="Solstice Retail — Target Architecture Style (Step 4 / ADR-001, ADR-002)\n\l";
+  node [fontname="Helvetica", shape=box, style="rounded,filled", fillcolor="#EAF1FB", color="#1F4E79", fontsize=11];
+  edge [fontname="Helvetica", fontsize=9, color="#555555"];
+
+  Customers [label="Global Customers\n(US / Canada / UK / Germany / France / Australia / Singapore)", shape=ellipse, fillcolor="#FFF2CC", color="#BF8F00"];
+  CDN [label="CDN / Edge\n(latency-based routing to nearest live region)", fillcolor="#D9E2F3"];
+
+  subgraph cluster_regions {
+    label="Active-Active Read Regions — for LATENCY, not failover\n(contrast with Case Study 3's active-passive warm-standby DR)";
+    fontsize=10; style="dashed"; color="#2E75B6";
+    SF_US [label="Storefront & Catalog\n(US region)"];
+    SF_EU [label="Storefront & Catalog\n(EU region)"];
+    SF_APAC [label="Storefront & Catalog\n(APAC region)"];
+    SF_US -> SF_EU [dir=both, style=dashed, label="global catalog\nread replication"];
+    SF_EU -> SF_APAC [dir=both, style=dashed, label="global catalog\nread replication"];
+  }
+
+  Cart [label="Cart\n(Refactor — regional-primary\nper customer's home region)", fillcolor="#EAF1FB"];
+
+  subgraph cluster_pci {
+    label="PCI Scope Boundary — SAQ A-EP target\n(narrow, NOT a platform-wide overlay)";
+    fontsize=10; style="dashed"; color="#C00000"; fontcolor="#C00000";
+    Checkout [label="Checkout & Payment\n(Rearchitect — regional-primary,\nisolated network segment)", fillcolor="#FCE4E4", color="#C00000"];
+  }
+
+  Gateway [label="Payment Gateway\n(3rd-party, PCI Level 1,\nhosted tokenization)", shape=ellipse, fillcolor="#E2EFDA", color="#548235"];
+
+  Orchestration [label="Inventory & Order Orchestration\n(Rearchitect — event-driven,\nregional-primary)", fillcolor="#EAF1FB"];
+  EventBus [label="Event Bus\n(order placed → inventory reserved →\npayment confirmed → fulfillment triggered)", shape=box, style="rounded,filled", fillcolor="#FFF2CC", color="#BF8F00"];
+  Fulfillment [label="Fulfillment / Warehouse\n(existing system — out of scope,\nCase Study 1 does not touch this)", shape=box, style="rounded,dashed", fillcolor="#F2F2F2", color="#7F7F7F", fontcolor="#7F7F7F"];
+
+  Customers -> CDN;
+  CDN -> SF_US; CDN -> SF_EU; CDN -> SF_APAC;
+  CDN -> Cart [label="add to cart"];
+  Cart -> Checkout [label="proceed to checkout"];
+  Customers -> Gateway [label="tokenized card data via hosted fields —\nnever touches Solstice servers", style=dashed, color="#548235", fontcolor="#548235", constraint=false];
+  Checkout -> Gateway [label="charge (token only)"];
+  Checkout -> Orchestration [label="order placed"];
+  Orchestration -> EventBus;
+  EventBus -> Fulfillment [style=dashed];
+  EventBus -> SF_US [label="inventory availability\n(async)", style=dotted, constraint=false];
+}
