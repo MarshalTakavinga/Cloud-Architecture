@@ -16,7 +16,7 @@ This case study compares **Azure, AWS, and GCP** — no private-cloud track. Sol
 | Current-state architecture | Done — [`docs/current-state.md`](docs/current-state.md), [current-state diagram](diagrams/current-state-architecture.png) |
 | 2–3. Requirements and NFRs | Done — [`docs/requirements.md`](docs/requirements.md) |
 | 4. Architecture options and styles | Done — [`docs/architecture-options-and-styles.md`](docs/architecture-options-and-styles.md), [ADR-001](adr/ADR-001-modernization-strategy-sce-components.md), [ADR-002](adr/ADR-002-target-architecture-style.md), [target-style diagram](diagrams/target-architecture-style.png) |
-| 5. Vendor-neutral logical design | Done — [`docs/logical-design.md`](docs/logical-design.md), [ADR-003](adr/ADR-003-multi-region-data-topology.md), [ADR-004](adr/ADR-004-payment-tokenization-approach.md), [logical architecture diagram](diagrams/logical-architecture.png) |
+| 5. Vendor-neutral logical design | Done — [`docs/logical-design.md`](docs/logical-design.md), [ADR-003](adr/ADR-003-multi-region-data-topology.md), [ADR-004](adr/ADR-004-payment-tokenization-approach.md), [logical architecture diagram](diagrams/logical-architecture.png), [multi-region data topology diagram](diagrams/multi-region-data-topology.png) |
 | 6. Azure implementation | Not started |
 | 7. AWS implementation | Not started |
 | 8. GCP implementation | Not started |
@@ -55,6 +55,7 @@ case-study-01-ecommerce-platform/
 ├── terraform/                    # IaC (populated once a platform is chosen)
 └── diagrams/
     ├── current-state-architecture.png       # Current-state deployment diagram, hand-drawn, verified against docs/current-state.md across 3 review rounds
-    ├── target-architecture-style.png/.dot   # Step 4 target-style diagram (ADR-001/ADR-002), dot-authored
-    └── logical-architecture.png/.dot        # Step 5 vendor-neutral logical design diagram (ADR-003/ADR-004), dot-authored
+    ├── target-architecture-style.png        # Step 4 target-style diagram (ADR-001/ADR-002), hand-drawn, checked against both ADRs
+    ├── logical-architecture.png             # Step 5 vendor-neutral logical design diagram (component/flow view, ADR-003/ADR-004)
+    └── multi-region-data-topology.png       # Step 5 ADR-003 detail diagram (catalog single-writer/multi-region-read topology + regional-primary transactional stores), checked against ADR-003 across 2 review rounds
 ```
