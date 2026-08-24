@@ -18,3 +18,7 @@ Server-side API tokenization is the current model, and it's the model that produ
 Hosted fields constrain the checkout page's UI to what the gateway's embeddable component supports  Solstice loses some control over the card-entry form's exact styling and validation behavior compared to owning that form outright. Client-side integration also means a gateway-side outage or degradation is now directly visible on Solstice's checkout page, in a UI element Solstice doesn't fully control  a real, accepted dependency, not a new one (the gateway relationship already existed), but a slightly more visible one at the point of integration.
 
 **Status:** Approved
+
+---
+
+See [`../diagrams/payment-tokenization-approach.png`](../diagrams/payment-tokenization-approach.png) for the detailed diagram matching this ADR's Decision  all three options considered (server-side API, hybrid/proxy, and the approved client-side hosted fields) drawn as data flows so the difference is visible, not just described: both rejected options route raw card data through the Checkout & Payment service at some point, while the approved option sends it from the browser straight to the gateway and returns only a token to Solstice. Checked against this ADR  content and flows for all three options match, including the hybrid option's rejection reason (the tokenization request transits Solstice's servers "even briefly," the exact problem this ADR eliminates).
