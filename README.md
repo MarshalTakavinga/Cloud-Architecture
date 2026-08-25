@@ -6,7 +6,7 @@ A portfolio of six cloud-architecture case studies, each run through the same pr
 
 | # | Case Study | Angle | Status |
 | --- | --- | --- | --- |
-| 1 | [Global e-commerce platform](case-study-01-ecommerce-platform/) | Seasonal traffic spikes, global customer base — autoscaling, CDN, cost optimization | In progress — Steps 1–5 done (business case through vendor-neutral logical design). Azure/AWS/GCP comparison, no private-cloud track. |
+| 1 | [Global e-commerce platform](case-study-01-ecommerce-platform/) | Seasonal traffic spikes, global customer base — autoscaling, CDN, cost optimization | In progress — Steps 1–6 done (business case through the Azure implementation, including its diagram). Azure/AWS/GCP comparison, no private-cloud track. |
 | 2 | [Banking modernization](case-study-02-banking-modernization/) | Core banking/payments workload — security, resiliency, regulatory reporting | Not started |
 | 3 | [Healthcare platform](case-study-03-healthcare-platform/) | On-premises appointment system, ~2M patients — HIPAA/compliance, HA/DR | **Done** — all 13 steps complete: problem → requirements → vendor-neutral design → four platform implementations (Azure/AWS/GCP/private) → decision matrix → target platform (Azure) → migration roadmap → cost/risk analysis |
 | 4 | [Manufacturing / IoT](case-study-04-manufacturing-iot/) | Device fleet ingesting telemetry at scale — event-driven architecture, data pipelines | Not started |
@@ -40,4 +40,4 @@ case-study-NN-name/
 
 ## Currently Active
 
-[Case Study 3 — Healthcare Platform](case-study-03-healthcare-platform/) is complete — all 13 steps done, see its README for the full breakdown. [Case Study 1 — Global E-Commerce Platform](case-study-01-ecommerce-platform/) is now in progress — Steps 1–5 done (business case through vendor-neutral logical design), 7 steps remaining.
+[Case Study 3 — Healthcare Platform](case-study-03-healthcare-platform/) is complete — all 13 steps done, see its README for the full breakdown. [Case Study 1 — Global E-Commerce Platform](case-study-01-ecommerce-platform/) is now in progress — Steps 1–6 done (business case through the Azure implementation, docs/ADRs/diagram), 6 steps remaining.
