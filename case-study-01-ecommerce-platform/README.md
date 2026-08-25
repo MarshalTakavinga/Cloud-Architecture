@@ -8,7 +8,7 @@ This case study compares **Azure, AWS, and GCP** — no private-cloud track. Sol
 
 ## Status
 
-**Steps 1–6 of 12 are complete.** Business case, current state, requirements, architecture options/styles, vendor-neutral logical design, and the Azure implementation (docs + ADRs + diagram) are done. Steps 7–12 (AWS/GCP implementations through cost/risk analysis) are not yet started.
+**Steps 1–7 of 12 are complete.** Business case, current state, requirements, architecture options/styles, vendor-neutral logical design, the Azure implementation, and the AWS implementation (docs + ADRs) are done. Steps 8–12 (GCP implementation through cost/risk analysis) are not yet started.
 
 | Step | Status |
 | --- | --- |
@@ -18,7 +18,7 @@ This case study compares **Azure, AWS, and GCP** — no private-cloud track. Sol
 | 4. Architecture options and styles | Done — [`docs/architecture-options-and-styles.md`](docs/architecture-options-and-styles.md), [ADR-001](adr/ADR-001-modernization-strategy-sce-components.md), [ADR-002](adr/ADR-002-target-architecture-style.md), [target-style diagram](diagrams/target-architecture-style.png) |
 | 5. Vendor-neutral logical design | Done — [`docs/logical-design.md`](docs/logical-design.md), [ADR-003](adr/ADR-003-multi-region-data-topology.md), [ADR-004](adr/ADR-004-payment-tokenization-approach.md), [logical architecture diagram](diagrams/logical-architecture.png), [multi-region data topology diagram](diagrams/multi-region-data-topology.png), [payment tokenization approach diagram](diagrams/payment-tokenization-approach.png) |
 | 6. Azure implementation | Done — [`docs/azure-implementation.md`](docs/azure-implementation.md), [`docs/application-architecture.md`](docs/application-architecture.md), [Azure implementation architecture diagram](diagrams/azure-implementation-architecture.png), ADR-005 through ADR-012 ([ADR-005](adr/ADR-005-azure-compute-customer-facing-services.md) compute/customer-facing, [ADR-006](adr/ADR-006-azure-database-regional-transactional-store.md) database/transactional, [ADR-007](adr/ADR-007-azure-database-global-catalog.md) database/catalog, [ADR-008](adr/ADR-008-azure-compute-order-orchestration.md) compute/orchestration, [ADR-009](adr/ADR-009-azure-messaging-event-bus.md) messaging, [ADR-010](adr/ADR-010-azure-customer-identity.md) identity, [ADR-011](adr/ADR-011-azure-network-topology.md) network, [ADR-012](adr/ADR-012-azure-global-entry-cdn-api-gateway.md) CDN/API gateway) — kept deliberately on the same PostgreSQL engine Solstice runs today (no unscoped database migration), Azure Container Apps chosen over AKS/App Service specifically for KEDA's fast reaction to the 20–25x/single-digit-minute traffic ramps this case study exists to survive, and Checkout & Payment given its own dedicated compute environment and subnet as the structural implementation of its PCI isolation boundary. Known deferred items: Bicep IaC modules not yet built, cost analysis is Step 12 by design. |
-| 7. AWS implementation | Not started |
+| 7. AWS implementation | Done — [`docs/aws-implementation.md`](docs/aws-implementation.md), ADR-013 through ADR-020 ([ADR-013](adr/ADR-013-aws-compute-customer-facing-services.md) compute/customer-facing, [ADR-014](adr/ADR-014-aws-database-regional-transactional-store.md) database/transactional, [ADR-015](adr/ADR-015-aws-database-global-catalog.md) database/catalog, [ADR-016](adr/ADR-016-aws-compute-order-orchestration.md) compute/orchestration, [ADR-017](adr/ADR-017-aws-messaging-event-bus.md) messaging, [ADR-018](adr/ADR-018-aws-customer-identity.md) identity, [ADR-019](adr/ADR-019-aws-network-topology.md) network, [ADR-020](adr/ADR-020-aws-global-entry-cdn-api-gateway.md) CDN/API gateway) — kept deliberately on the same RDS PostgreSQL engine Solstice runs today (no database migration), and Order Orchestration's saga runs on AWS Step Functions + Lambda rather than mirroring Azure's Container Apps pattern, since Step Functions is a managed state-machine engine that removes the need for a long-running process to hold saga state at all — a genuinely AWS-native answer, not a renamed copy of the Azure decision. Known deferred items: CloudFormation/CDK templates not yet built, diagrams not yet drawn, cost analysis is a later step. |
 | 8. GCP implementation | Not started |
 | 9. Decision matrix (Azure / AWS / GCP) | Not started |
 | 10. Recommended platform / target architecture | Not started |
@@ -39,14 +39,14 @@ case-study-01-ecommerce-platform/
 │   ├── logical-design.md                  # (Step 5) vendor-neutral logical architecture
 │   ├── azure-implementation.md            # (Step 6) Azure service mapping, network, security, observability, IaC
 │   ├── application-architecture.md        # (Step 6) per-service hosting, connectivity, public/private, scaling/HA (Azure)
-│   ├── aws-implementation.md              # (Step 7) AWS service mapping, network, security, DR, IaC
+│   ├── aws-implementation.md              # (Step 7) AWS service mapping, network, security, DR, IaC, per-service hosting detail
 │   ├── gcp-implementation.md              # (Step 8) GCP service mapping, network, security, DR, IaC
 │   ├── decision-matrix.md                 # (Step 9) weighted vendor-neutral scoring of all three platform tracks
 │   ├── target-architecture.md             # (Step 10) recommended platform and target architecture summary
 │   ├── migration-roadmap.md               # (Step 11) phased migration plan, rollback strategy
 │   └── cost-and-risk-analysis.md          # (Step 12) 3-5yr TCO comparison and consolidated risk register
 │
-├── adr/                          # architecture decision records — ADR-001 through ADR-012 so far (own numbering, separate from Case Study 3)
+├── adr/                          # architecture decision records — ADR-001 through ADR-020 so far (own numbering, separate from Case Study 3)
 ├── architecture/
 │   ├── context/                  # executive context view
 │   ├── solution/                 # solution / physical deployment
