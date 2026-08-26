@@ -34,3 +34,7 @@ Running the legacy monolith and the new architecture against the same live datab
 | Decommission trigger | Only after Phase 3 (`docs/migration-roadmap.md` §6) passes cleanly  a full peak event served entirely by the new architecture |
 
 **Status:** Approved
+
+---
+
+See [diagram](../diagrams/us-cutover-mechanism-and-rollback.png).
