@@ -32,3 +32,7 @@ Cloud Workflows pricing is per internal step and per external (HTTP) call, not p
 | Saga-state store | Workflows' own execution history and variable state, durable and managed by the service  no dedicated schema/table required, the same gap ADR-008's Azure and ADR-016's AWS equivalents avoided by not building this in the Regional Transactional Store |
 
 **Status:** Approved
+
+---
+
+See [diagram](../diagrams/gcp-compute-order-orchestration.png).

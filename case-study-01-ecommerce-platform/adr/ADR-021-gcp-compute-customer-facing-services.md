@@ -35,3 +35,7 @@ Unlike ADR-013's honestly-named US migration risk, this track has no equivalent 
 | Regional split assumption | Directional only  mirrors ADR-005/ADR-013's assumption; revisited once real post-launch regional traffic data exists (Step 11) | Same directional split |
 
 **Status:** Approved
+
+---
+
+See [diagram](../diagrams/gcp-compute-customer-facing-services.png).

@@ -31,3 +31,7 @@ Unlike ADR-015's AWS track, the US primary here carries no migration risk  all t
 | Write path | US region only  merchandising/back-office tooling writes exclusively to the primary |
 
 **Status:** Approved
+
+---
+
+See [diagram](../diagrams/gcp-database-global-catalog.png).

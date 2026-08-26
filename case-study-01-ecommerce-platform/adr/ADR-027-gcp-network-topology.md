@@ -28,3 +28,7 @@ Stated honestly rather than smoothed over: a single global VPC concentrates the 
 | Cross-region traffic in practice | Global Catalog cross-region read replication (US primary → EU/APAC replicas, ADR-023) is the only steady-state cross-region data path; Cart/Checkout/Orders/Event Bus traffic (ADR-022, ADR-025) stays entirely within its own region by design |
 
 **Status:** Approved
+
+---
+
+See [diagram](../diagrams/gcp-network-topology.png).

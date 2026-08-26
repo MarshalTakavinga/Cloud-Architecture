@@ -33,3 +33,7 @@ The data-residency verification item named above is carried forward honestly as 
 | Session issuance | Short-lived access token + refresh token, validated per-request at the API layer, not per-service |
 
 **Status:** Approved
+
+---
+
+See [diagram](../diagrams/gcp-customer-identity.png).

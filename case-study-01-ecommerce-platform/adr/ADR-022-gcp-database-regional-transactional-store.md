@@ -32,3 +32,7 @@ One gap worth naming honestly rather than smoothing over: unlike AWS's RDS Proxy
 | Regional split | One independent instance per region  US, EU, APAC  no shared state between them; all three regions are greenfield (no existing GCP production instance to migrate, unlike ADR-014's AWS track) |
 
 **Status:** Approved
+
+---
+
+See [diagram](../diagrams/gcp-database-regional-transactional-store.png).

@@ -31,3 +31,7 @@ Two products in front of every request (the load balancer/CDN, then regional API
 | Backend routing | API Gateway routes to the correct Cloud Run service (ADR-021) based on resource path  storefront/catalog reads, cart operations, checkout initiation  over Serverless VPC Access private connectivity, not the public internet |
 
 **Status:** Approved
+
+---
+
+See [diagram](../diagrams/gcp-global-entry-cdn-api-gateway.png).

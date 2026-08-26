@@ -29,3 +29,7 @@ Enabling ordering keys on a subscription carries a documented per-key throughput
 | Consumer | Inventory & Order Orchestration (ADR-024), triggered via Eventarc; Fulfillment/Warehouse via its own Pub/Sub subscription |
 
 **Status:** Approved
+
+---
+
+See [diagram](../diagrams/gcp-messaging-event-bus.png).
