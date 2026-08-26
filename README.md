@@ -1,16 +1,16 @@
 # Cloud Architecture
 
-A portfolio of six cloud-architecture case studies, each run through the same process — business problem, requirements, architecture options, vendor-neutral logical design, platform-specific implementations (Azure/AWS/GCP/private), a weighted decision matrix, a recommended target architecture, a migration roadmap with ADRs, and a cost/risk analysis — to demonstrate architecture judgment across platforms rather than certification recall.
+A portfolio of six cloud-architecture case studies, each run through the same process  business problem, requirements, architecture options, vendor-neutral logical design, platform-specific implementations (Azure/AWS/GCP/private), a weighted decision matrix, a recommended target architecture, a migration roadmap with ADRs, and a cost/risk analysis  to demonstrate architecture judgment across platforms rather than certification recall.
 
 ## Case Studies
 
 | # | Case Study | Angle | Status |
 | --- | --- | --- | --- |
-| 1 | [Global e-commerce platform](case-study-01-ecommerce-platform/) | Seasonal traffic spikes, global customer base — autoscaling, CDN, cost optimization | In progress — Steps 1–6 done (business case through the Azure implementation, including its diagram). Azure/AWS/GCP comparison, no private-cloud track. |
-| 2 | [Banking modernization](case-study-02-banking-modernization/) | Core banking/payments workload — security, resiliency, regulatory reporting | Not started |
+| 1 | [Global e-commerce platform](case-study-01-ecommerce-platform/) | Seasonal traffic spikes, global customer base  autoscaling, CDN, cost optimization | In progress  Steps 1–6 done (business case through the Azure implementation, including its diagram). Azure/AWS/GCP comparison, no private-cloud track. |
+| 2 | [Banking modernization](case-study-02-banking-modernization/) | Core banking/payments workload  security, resiliency, regulatory reporting | Not started |
 | 3 | [Healthcare platform](case-study-03-healthcare-platform/) | On-premises appointment system, ~2M patients — HIPAA/compliance, HA/DR | **Done** — all 13 steps complete: problem → requirements → vendor-neutral design → four platform implementations (Azure/AWS/GCP/private) → decision matrix → target platform (Azure) → migration roadmap → cost/risk analysis |
-| 4 | [Manufacturing / IoT](case-study-04-manufacturing-iot/) | Device fleet ingesting telemetry at scale — event-driven architecture, data pipelines | Not started |
-| 5 | [Enterprise data and AI platform](case-study-05-enterprise-data-ai/) | Data analytics and AI/RAG — data architecture, FinOps | Not started |
+| 4 | [Manufacturing / IoT](case-study-04-manufacturing-iot/) | Device fleet ingesting telemetry at scale , event-driven architecture, data pipelines | Not started |
+| 5 | [Enterprise data and AI platform](case-study-05-enterprise-data-ai/) | Data analytics and AI/RAG  data architecture, FinOps | Not started |
 | 6 | [Hybrid / private-cloud modernization](case-study-06-hybrid-private-cloud/) | Existing data-center estate extending into public cloud via VCF, Azure Arc, or Anthos | Not started |
 
 ## Structure
