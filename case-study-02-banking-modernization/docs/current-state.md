@@ -1,5 +1,7 @@
 # Current-State Architecture
 
+See [`diagrams/current-state-architecture.png`](../diagrams/current-state-architecture.png) for the full current-state deployment diagram, checked against this document.
+
 ## Core Banking (System of Record)
 
 - **Platform:** IBM zSystems mainframe, single owned data center. Two logical partitions (LPARs): production and a lower environment shared across QA/UAT.
