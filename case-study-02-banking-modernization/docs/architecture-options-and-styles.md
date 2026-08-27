@@ -11,12 +11,12 @@ Every option below is judged against the same five ranked drivers from `problem-
 | Core ledger (COBOL/CICS on DB2 for z/OS) | **Retain** | System of record; out of scope to replace (constraint in `requirements.md`); the initiative's entire premise is building around it, not on top of it. |
 | Digital banking platform (vendor, on-prem VMware) | **Retain platform / Refactor integration** | The platform itself stays; only its mainframe integration is extended from batch-file-only to include a real-time path. |
 | 2021 ad hoc AWS account (push notifications, mobile analytics) | **Replatform** | Workloads are sound; the problem is governance, not the workloads themselves. They move into the new governed landing zone this initiative builds — onto whichever platform Step 10 selects. |
-| Real-time payments rail connectivity (FedNow / ISO 20022 messaging) | **Repurchase** | Rail certification and ISO 20022 message handling is a regulatory-heavy commodity capability; buying a certified gateway is faster and lower-risk than building one under an 18-month deadline (see ADR-002). |
+| Real-time payments rail connectivity (FedNow / ISO 20022 messaging) | **Repurchase** | Rail certification and ISO 20022 message handling is a regulatory-heavy commodity capability; buying a certified gateway is faster and lower-risk than building one under an 18-month deadline (see [ADR-002](../adr/ADR-002-payment-hub-build-vs-buy.md)). |
 | Fraud scoring and orchestration | **Refactor / re-architect (greenfield)** | No existing real-time capability to extend — this is new-build, but scoped as an orchestration layer around Palisade's own risk rules, not a full fraud platform rebuild. |
-| Ledger-of-intent / mainframe integration adapter | **Refactor / re-architect (greenfield)** | New component; this is where Palisade-specific integration logic and value live (see ADR-001). |
+| Ledger-of-intent / mainframe integration adapter | **Refactor / re-architect (greenfield)** | New component; this is where Palisade-specific integration logic and value live (see [ADR-001](../adr/ADR-001-mainframe-integration-approach.md)). |
 | Existing batch fraud stack | **Retire (partial)** | Retired specifically for the real-time-payments path once real-time scoring is live; retained as-is for ACH/wire and other rails that remain out of scope for this case study. |
 
-## Integration Style Options (feeds ADR-001)
+## Integration Style Options (feeds [ADR-001](../adr/ADR-001-mainframe-integration-approach.md))
 
 Four options were evaluated for how the new real-time capability attaches to the mainframe:
 
@@ -26,13 +26,13 @@ Four options were evaluated for how the new real-time capability attaches to the
 4. **Change-data-capture (CDC) off the DB2 for z/OS transaction log, publishing an event stream, paired with a new ledger-of-intent that holds real-time posting state** until reconciled with the mainframe's batch-confirmed ledger. Fully decouples the real-time system from mainframe batch-window availability and touches no COBOL logic — but introduces eventual consistency between "provisionally posted" and "batch-confirmed," which has to be modeled explicitly (a customer needs to see *something* the instant a payment lands, and that something has to be honest about its own state).
 5. **Hybrid: CDC out (as in option 4) plus one narrowly scoped synchronous call into CICS** — a balance check and funds hold at the moment of payment authorization only, using the same CICS API mechanism from option 3, but limited to this single, low-latency, already-well-understood transaction type rather than every posting. Everything downstream of the hold (event publishing, fraud scoring, ledger-of-intent update, customer notification) stays fully event-driven and decoupled.
 
-**Selected: Option 5.** It is the only option that satisfies NFR-3 (real-time confirmation), NFR-5 (idempotent, exactly-once posting via hold + correlation ID), and driver 5 (batch window untouched, no COBOL rewrite) simultaneously. The full reasoning, rejected alternatives, and consequences are recorded in **ADR-001**.
+**Selected: Option 5.** It is the only option that satisfies NFR-3 (real-time confirmation), NFR-5 (idempotent, exactly-once posting via hold + correlation ID), and driver 5 (batch window untouched, no COBOL rewrite) simultaneously. The full reasoning, rejected alternatives, and consequences are recorded in **[ADR-001](../adr/ADR-001-mainframe-integration-approach.md)**.
 
-## Target Architecture Style (feeds ADR-002)
+## Target Architecture Style (feeds [ADR-002](../adr/ADR-002-payment-hub-build-vs-buy.md))
 
-Given the integration style above, the target style is an **event-driven integration layer** sitting between the mainframe and the outside world: a message broker carries payment-intent, fraud-decision, and ledger-of-intent events between a small number of purpose-built services, with the mainframe touched only via (a) the CDC feed reading its log and (b) the single synchronous hold/release call from ADR-001.
+Given the integration style above, the target style is an **event-driven integration layer** sitting between the mainframe and the outside world: a message broker carries payment-intent, fraud-decision, and ledger-of-intent events between a small number of purpose-built services, with the mainframe touched only via (a) the CDC feed reading its log and (b) the single synchronous hold/release call from [ADR-001](../adr/ADR-001-mainframe-integration-approach.md).
 
-Within that style, a build-vs-buy question remains: does Palisade build the ISO 20022/FedNow rail connectivity itself, buy a commercial payment-hub product for the whole layer, or split the difference? This is decided in **ADR-002** — buy the certified rail-connectivity gateway (a compliance-heavy commodity), build the fraud-orchestration and ledger-of-intent/mainframe-adapter services in-house (where Palisade's own logic and integration needs are not generic).
+Within that style, a build-vs-buy question remains: does Palisade build the ISO 20022/FedNow rail connectivity itself, buy a commercial payment-hub product for the whole layer, or split the difference? This is decided in **[ADR-002](../adr/ADR-002-payment-hub-build-vs-buy.md)** — buy the certified rail-connectivity gateway (a compliance-heavy commodity), build the fraud-orchestration and ledger-of-intent/mainframe-adapter services in-house (where Palisade's own logic and integration needs are not generic).
 
 ```mermaid
 flowchart LR
@@ -68,7 +68,7 @@ flowchart LR
     BUS -- "confirmation" --> NOTIFY
 ```
 
-*Diagram source: `diagrams/target-architecture-style.md` (Mermaid, renders natively on GitHub). A hand-drawn version to match the visual style of Case Studies 1 and 3 can be added later; this is the authoritative, version-controlled source in the meantime — consistent with the guide's own preference for diagrams-as-code.*
+*Diagram source: [`diagrams/target-architecture-style.md`](../diagrams/target-architecture-style.md) (Mermaid, renders natively on GitHub). A hand-drawn version to match the visual style of Case Studies 1 and 3 can be added later; this is the authoritative, version-controlled source in the meantime — consistent with the guide's own preference for diagrams-as-code.*
 
 ## What Step 4 Deliberately Leaves Open
 

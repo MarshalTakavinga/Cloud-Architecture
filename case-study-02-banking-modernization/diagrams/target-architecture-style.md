@@ -1,6 +1,6 @@
 # Diagram: Target Architecture Style (Step 4)
 
-Source of truth for the Step 4 target-style diagram referenced in `docs/architecture-options-and-styles.md`, ADR-001, and ADR-002. Rendered as Mermaid (diagrams-as-code, renders natively on GitHub) rather than a static image, so it stays in sync with the ADRs as they evolve. A hand-drawn version matching the visual style of Case Studies 1 and 3's PNG diagrams can be added alongside this later without replacing it as the source.
+Source of truth for the Step 4 target-style diagram referenced in [`docs/architecture-options-and-styles.md`](../docs/architecture-options-and-styles.md), [ADR-001](../adr/ADR-001-mainframe-integration-approach.md), and [ADR-002](../adr/ADR-002-payment-hub-build-vs-buy.md). Rendered as Mermaid (diagrams-as-code, renders natively on GitHub) rather than a static image, so it stays in sync with the ADRs as they evolve. A hand-drawn version matching the visual style of Case Studies 1 and 3's PNG diagrams can be added alongside this later without replacing it as the source.
 
 ```mermaid
 flowchart LR

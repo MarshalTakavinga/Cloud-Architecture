@@ -16,10 +16,10 @@ This case study runs all **four** implementation tracks — Azure, AWS, GCP, and
 
 | Step | Status |
 | --- | --- |
-| 1. Business problem | Done — `docs/problem-statement.md` |
-| Current-state architecture | Done — `docs/current-state.md` |
-| 2–3. Requirements and NFRs | Done — `docs/requirements.md` |
-| 4. Architecture options and styles | Done — `docs/architecture-options-and-styles.md`, ADR-001, ADR-002, target-style diagram — 6-R disposition per component; mainframe integration approach (hybrid sync-hold + CDC); build-vs-buy for the payments rail/fraud/ledger-of-intent layer |
+| 1. Business problem | Done — [`docs/problem-statement.md`](docs/problem-statement.md) |
+| Current-state architecture | Done — [`docs/current-state.md`](docs/current-state.md) |
+| 2–3. Requirements and NFRs | Done — [`docs/requirements.md`](docs/requirements.md) |
+| 4. Architecture options and styles | Done — [`docs/architecture-options-and-styles.md`](docs/architecture-options-and-styles.md), [ADR-001](adr/ADR-001-mainframe-integration-approach.md), [ADR-002](adr/ADR-002-payment-hub-build-vs-buy.md), [target-style diagram](diagrams/target-architecture-style.md) — 6-R disposition per component; mainframe integration approach (hybrid sync-hold + CDC); build-vs-buy for the payments rail/fraud/ledger-of-intent layer |
 | 5. Vendor-neutral logical design | Not started |
 | 6. Azure implementation | Not started |
 | 7. AWS implementation | Not started |
