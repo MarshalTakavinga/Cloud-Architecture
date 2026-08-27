@@ -33,7 +33,7 @@
 
 ## Diagram
 
-See [`diagrams/logical-architecture.md`](../diagrams/logical-architecture.md) for the full sequence diagram covering both the happy path and the two decline branches (insufficient funds, fraud decline). The hand-drawn [`diagrams/target-architecture-style.png`](../diagrams/target-architecture-style.png) (introduced in [Step 4](architecture-options-and-styles.md)) also depicts this step's component model and state machine in a single static view, verified against this document component-by-component.
+See [`diagrams/logical-architecture.md`](../diagrams/logical-architecture.md) (Mermaid sequence diagram) and [`diagrams/logical-architecture.png`](../diagrams/logical-architecture.png) (swim-lane flow diagram, numbered end-to-end) for the full flow covering both the happy path and the two decline branches (insufficient funds, fraud decline), plus the nightly reconciliation path — both verified component-by-component against this document. [`diagrams/target-architecture-style.png`](../diagrams/target-architecture-style.png) (introduced in [Step 4](architecture-options-and-styles.md)) also depicts this step's component model and state machine in a single static view.
 
 ## Key Decisions Made at This Step
 
