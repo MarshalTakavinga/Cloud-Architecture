@@ -7,7 +7,7 @@ A portfolio of six cloud-architecture case studies, each run through the same pr
 | # | Case Study | Angle | Status |
 | --- | --- | --- | --- |
 | 1 | [Global e-commerce platform](case-study-01-ecommerce-platform/) | Seasonal traffic spikes, global customer base  autoscaling, CDN, cost optimization | **Done** — all 12 steps complete: problem → requirements → architecture options → vendor-neutral design → three platform implementations (Azure/AWS/GCP) → decision matrix → target platform (AWS) → migration roadmap → cost/risk analysis |
-| 2 | [Banking modernization](case-study-02-banking-modernization/) | Core banking/payments workload  security, resiliency, regulatory reporting | Not started |
+| 2 | [Banking modernization](case-study-02-banking-modernization/) | Core banking/payments workload  security, resiliency, regulatory reporting | **In progress** — Steps 1–4 of 13 complete: problem → current-state → requirements/NFRs → architecture options and target style (ADR-001 mainframe integration, ADR-002 build-vs-buy). Vendor-neutral logical design (Step 5) is next. |
 | 3 | [Healthcare platform](case-study-03-healthcare-platform/) | On-premises appointment system, ~2M patients — HIPAA/compliance, HA/DR | **Done** — all 13 steps complete: problem → requirements → vendor-neutral design → four platform implementations (Azure/AWS/GCP/private) → decision matrix → target platform (Azure) → migration roadmap → cost/risk analysis |
 | 4 | [Manufacturing / IoT](case-study-04-manufacturing-iot/) | Device fleet ingesting telemetry at scale , event-driven architecture, data pipelines | Not started |
 | 5 | [Enterprise data and AI platform](case-study-05-enterprise-data-ai/) | Data analytics and AI/RAG  data architecture, FinOps | Not started |
@@ -40,4 +40,4 @@ case-study-NN-name/
 
 ## Currently Active
 
-[Case Study 3 — Healthcare Platform](case-study-03-healthcare-platform/) and [Case Study 1 — Global E-Commerce Platform](case-study-01-ecommerce-platform/) are both complete — see each case study's README for the full breakdown. Case Studies 2, 4, 5, and 6 have not yet started.
+[Case Study 2 — Banking Modernization](case-study-02-banking-modernization/) is in progress (Steps 1–4 of 13 complete). [Case Study 3 — Healthcare Platform](case-study-03-healthcare-platform/) and [Case Study 1 — Global E-Commerce Platform](case-study-01-ecommerce-platform/) are both complete — see each case study's README for the full breakdown. Case Studies 4, 5, and 6 have not yet started.
