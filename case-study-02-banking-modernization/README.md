@@ -12,7 +12,7 @@ This case study runs all **four** implementation tracks — Azure, AWS, GCP, and
 
 ## Status
 
-**Steps 1–8 of 13 complete.**
+**Steps 1–9 of 13 complete.**
 
 | Step | Status |
 | --- | --- |
@@ -24,7 +24,7 @@ This case study runs all **four** implementation tracks — Azure, AWS, GCP, and
 | 6. Azure implementation | Done — [`docs/azure-implementation.md`](docs/azure-implementation.md), [ADR-005](adr/ADR-005-azure-compute-platform.md), [ADR-006](adr/ADR-006-azure-ledger-of-intent-database.md), [ADR-007](adr/ADR-007-azure-messaging.md), [ADR-008](adr/ADR-008-hybrid-connectivity.md), [ADR-009](adr/ADR-009-azure-identity.md), [ADR-010](adr/ADR-010-azure-landing-zone-and-segmentation.md), [Azure implementation diagram](diagrams/azure-implementation-architecture.png) — compute platform (Container Apps for the three real-time services + a Container Apps Job for nightly reconciliation), data store (Azure SQL + Ledger), messaging (Service Bus Premium/sessions), hybrid connectivity (ExpressRoute), identity (Entra ID + Managed Identities), landing zone/segmentation (hub-spoke) |
 | 7. AWS implementation | Done — [`docs/aws-implementation.md`](docs/aws-implementation.md), [ADR-011](adr/ADR-011-aws-compute-platform.md), [ADR-012](adr/ADR-012-aws-ledger-of-intent-database.md), [ADR-013](adr/ADR-013-aws-messaging.md), [ADR-014](adr/ADR-014-aws-hybrid-connectivity.md), [ADR-015](adr/ADR-015-aws-identity.md), [ADR-016](adr/ADR-016-aws-landing-zone-and-segmentation.md) — compute platform (Fargate on ECS for the three real-time services + a scheduled Fargate task for nightly reconciliation), data store (Aurora PostgreSQL + S3 Object Lock archive), messaging (SNS FIFO + per-consumer SQS FIFO queues), hybrid connectivity (Direct Connect), identity (IAM Identity Center + AD Connector + IAM roles for tasks), landing zone (Control Tower multi-account Organization, enrolling the existing 2021 account rather than rebuilding it) |
 | 8. GCP implementation | Done — [`docs/gcp-implementation.md`](docs/gcp-implementation.md), [ADR-017](adr/ADR-017-gcp-compute-platform.md), [ADR-018](adr/ADR-018-gcp-ledger-of-intent-database.md), [ADR-019](adr/ADR-019-gcp-messaging.md), [ADR-020](adr/ADR-020-gcp-hybrid-connectivity.md), [ADR-021](adr/ADR-021-gcp-identity.md), [ADR-022](adr/ADR-022-gcp-landing-zone-and-segmentation.md) — compute platform (Cloud Run for the three real-time services + a Cloud Run Job for nightly reconciliation), data store (Cloud SQL for PostgreSQL + Cloud Storage Bucket Lock archive), messaging (a single Pub/Sub topic with ordering keys and four subscriptions), hybrid connectivity (Dedicated Interconnect), identity (Workforce Identity Federation + Workload Identity), landing zone (Resource Manager folders/projects, Organization Policy, Security Command Center) |
-| 9. Private-cloud implementation | Not started |
+| 9. Private-cloud implementation | Done — [`docs/private-cloud-implementation.md`](docs/private-cloud-implementation.md), [ADR-023](adr/ADR-023-private-cloud-platform-and-facility-strategy.md), [ADR-024](adr/ADR-024-private-cloud-compute-platform.md), [ADR-025](adr/ADR-025-private-cloud-database.md), [ADR-026](adr/ADR-026-private-cloud-network-topology.md), [ADR-027](adr/ADR-027-private-cloud-identity.md), [ADR-028](adr/ADR-028-private-cloud-messaging.md) — VMware Cloud Foundation built in Palisade's own existing primary + secondary data centers (no new facility needed), Tanzu Kubernetes Grid compute (the one track that can't avoid the Kubernetes-ops burden every hyperscaler track avoided), self-managed HA PostgreSQL, NSX micro-segmentation with zero hybrid-connectivity cost (same facility as the mainframe), direct on-prem AD join for identity, self-managed RabbitMQ for messaging |
 | 10. Decision matrix | Not started |
 | 11. Recommended platform / target architecture | Not started |
 | 12. Migration roadmap and ADRs | Not started |
@@ -44,7 +44,8 @@ case-study-02-banking-modernization/
 │   ├── logical-design.md                  # (Step 5) logical component model, data flow, ADR-003/ADR-004 (done)
 │   ├── azure-implementation.md            # (Step 6) service mapping, ADR-005–ADR-010, network/security/observability (done)
 │   ├── aws-implementation.md              # (Step 7) service mapping, ADR-011–ADR-016, network/security/observability (done)
-│   └── gcp-implementation.md              # (Step 8) service mapping, ADR-017–ADR-022, network/security/observability (done)
+│   ├── gcp-implementation.md              # (Step 8) service mapping, ADR-017–ADR-022, network/security/observability (done)
+│   └── private-cloud-implementation.md    # (Step 9) service mapping, ADR-023–ADR-028, network/security/observability (done)
 │
 ├── adr/
 │   ├── ADR-001-mainframe-integration-approach.md         # hybrid sync-hold + CDC pattern (done)
@@ -68,7 +69,13 @@ case-study-02-banking-modernization/
 │   ├── ADR-019-gcp-messaging.md                          # Pub/Sub, ordering keys, four subscriptions (done)
 │   ├── ADR-020-gcp-hybrid-connectivity.md                # Dedicated Interconnect + Cloud VPN failover (done)
 │   ├── ADR-021-gcp-identity.md                           # Workforce Identity Federation + Workload Identity (done)
-│   └── ADR-022-gcp-landing-zone-and-segmentation.md      # Resource Manager folders/projects, Org Policy, Security Command Center (done)
+│   ├── ADR-022-gcp-landing-zone-and-segmentation.md      # Resource Manager folders/projects, Org Policy, Security Command Center (done)
+│   ├── ADR-023-private-cloud-platform-and-facility-strategy.md  # VMware Cloud Foundation in Palisade's existing data centers (done)
+│   ├── ADR-024-private-cloud-compute-platform.md         # Tanzu Kubernetes Grid for the three services + a CronJob for reconciliation (done)
+│   ├── ADR-025-private-cloud-database.md                 # Self-managed HA PostgreSQL (Patroni) (done)
+│   ├── ADR-026-private-cloud-network-topology.md         # NSX micro-segmentation, no hybrid-connectivity circuit needed (done)
+│   ├── ADR-027-private-cloud-identity.md                 # Direct on-prem AD join + mutual TLS via internal PKI (done)
+│   └── ADR-028-private-cloud-messaging.md                # Self-managed RabbitMQ, Consistent Hash Exchange (done)
 ├── architecture/
 │   ├── context/
 │   ├── solution/
