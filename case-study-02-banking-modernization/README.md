@@ -12,7 +12,7 @@ This case study runs all **four** implementation tracks — Azure, AWS, GCP, and
 
 ## Status
 
-**Steps 1–7 of 13 complete.**
+**Steps 1–8 of 13 complete.**
 
 | Step | Status |
 | --- | --- |
@@ -23,7 +23,7 @@ This case study runs all **four** implementation tracks — Azure, AWS, GCP, and
 | 5. Vendor-neutral logical design | Done — [`docs/logical-design.md`](docs/logical-design.md), [ADR-003](adr/ADR-003-provisional-vs-confirmed-state-model.md), [ADR-004](adr/ADR-004-idempotency-and-exactly-once-delivery.md), [logical-architecture diagram (Mermaid)](diagrams/logical-architecture.md), [logical-architecture diagram](diagrams/logical-architecture.png) — logical component model, end-to-end payment data flow, provisional-vs-confirmed reconciliation model, idempotency/exactly-once approach |
 | 6. Azure implementation | Done — [`docs/azure-implementation.md`](docs/azure-implementation.md), [ADR-005](adr/ADR-005-azure-compute-platform.md), [ADR-006](adr/ADR-006-azure-ledger-of-intent-database.md), [ADR-007](adr/ADR-007-azure-messaging.md), [ADR-008](adr/ADR-008-hybrid-connectivity.md), [ADR-009](adr/ADR-009-azure-identity.md), [ADR-010](adr/ADR-010-azure-landing-zone-and-segmentation.md), [Azure implementation diagram](diagrams/azure-implementation-architecture.png) — compute platform (Container Apps for the three real-time services + a Container Apps Job for nightly reconciliation), data store (Azure SQL + Ledger), messaging (Service Bus Premium/sessions), hybrid connectivity (ExpressRoute), identity (Entra ID + Managed Identities), landing zone/segmentation (hub-spoke) |
 | 7. AWS implementation | Done — [`docs/aws-implementation.md`](docs/aws-implementation.md), [ADR-011](adr/ADR-011-aws-compute-platform.md), [ADR-012](adr/ADR-012-aws-ledger-of-intent-database.md), [ADR-013](adr/ADR-013-aws-messaging.md), [ADR-014](adr/ADR-014-aws-hybrid-connectivity.md), [ADR-015](adr/ADR-015-aws-identity.md), [ADR-016](adr/ADR-016-aws-landing-zone-and-segmentation.md) — compute platform (Fargate on ECS for the three real-time services + a scheduled Fargate task for nightly reconciliation), data store (Aurora PostgreSQL + S3 Object Lock archive), messaging (SNS FIFO + per-consumer SQS FIFO queues), hybrid connectivity (Direct Connect), identity (IAM Identity Center + AD Connector + IAM roles for tasks), landing zone (Control Tower multi-account Organization, enrolling the existing 2021 account rather than rebuilding it) |
-| 8. GCP implementation | Not started |
+| 8. GCP implementation | Done — [`docs/gcp-implementation.md`](docs/gcp-implementation.md), [ADR-017](adr/ADR-017-gcp-compute-platform.md), [ADR-018](adr/ADR-018-gcp-ledger-of-intent-database.md), [ADR-019](adr/ADR-019-gcp-messaging.md), [ADR-020](adr/ADR-020-gcp-hybrid-connectivity.md), [ADR-021](adr/ADR-021-gcp-identity.md), [ADR-022](adr/ADR-022-gcp-landing-zone-and-segmentation.md) — compute platform (Cloud Run for the three real-time services + a Cloud Run Job for nightly reconciliation), data store (Cloud SQL for PostgreSQL + Cloud Storage Bucket Lock archive), messaging (a single Pub/Sub topic with ordering keys and four subscriptions), hybrid connectivity (Dedicated Interconnect), identity (Workforce Identity Federation + Workload Identity), landing zone (Resource Manager folders/projects, Organization Policy, Security Command Center) |
 | 9. Private-cloud implementation | Not started |
 | 10. Decision matrix | Not started |
 | 11. Recommended platform / target architecture | Not started |
@@ -43,7 +43,8 @@ case-study-02-banking-modernization/
 │   ├── architecture-options-and-styles.md # (Step 4) 6-R disposition, integration options, target style (done)
 │   ├── logical-design.md                  # (Step 5) logical component model, data flow, ADR-003/ADR-004 (done)
 │   ├── azure-implementation.md            # (Step 6) service mapping, ADR-005–ADR-010, network/security/observability (done)
-│   └── aws-implementation.md              # (Step 7) service mapping, ADR-011–ADR-016, network/security/observability (done)
+│   ├── aws-implementation.md              # (Step 7) service mapping, ADR-011–ADR-016, network/security/observability (done)
+│   └── gcp-implementation.md              # (Step 8) service mapping, ADR-017–ADR-022, network/security/observability (done)
 │
 ├── adr/
 │   ├── ADR-001-mainframe-integration-approach.md         # hybrid sync-hold + CDC pattern (done)
@@ -61,7 +62,13 @@ case-study-02-banking-modernization/
 │   ├── ADR-013-aws-messaging.md                          # SNS FIFO + per-consumer SQS FIFO queues (done)
 │   ├── ADR-014-aws-hybrid-connectivity.md                # Direct Connect + VPN failover (done)
 │   ├── ADR-015-aws-identity.md                           # IAM Identity Center + AD Connector + IAM roles for tasks (done)
-│   └── ADR-016-aws-landing-zone-and-segmentation.md      # Control Tower multi-account Organization, enrolling the 2021 account (done)
+│   ├── ADR-016-aws-landing-zone-and-segmentation.md      # Control Tower multi-account Organization, enrolling the 2021 account (done)
+│   ├── ADR-017-gcp-compute-platform.md                   # Cloud Run for the three services + a Cloud Run Job for nightly reconciliation (done)
+│   ├── ADR-018-gcp-ledger-of-intent-database.md          # Cloud SQL for PostgreSQL + Cloud Storage Bucket Lock archive (done)
+│   ├── ADR-019-gcp-messaging.md                          # Pub/Sub, ordering keys, four subscriptions (done)
+│   ├── ADR-020-gcp-hybrid-connectivity.md                # Dedicated Interconnect + Cloud VPN failover (done)
+│   ├── ADR-021-gcp-identity.md                           # Workforce Identity Federation + Workload Identity (done)
+│   └── ADR-022-gcp-landing-zone-and-segmentation.md      # Resource Manager folders/projects, Org Policy, Security Command Center (done)
 ├── architecture/
 │   ├── context/
 │   ├── solution/

@@ -1,0 +1,28 @@
+# ADR-017: GCP Compute Platform for the New Real-Time Services and the Nightly Reconciliation Job
+
+**Status:** Approved
+**Date:** Step 8 of the Case Study 2 pipeline
+
+## Context
+
+[Step 5](../docs/logical-design.md) defined three new, greenfield services that need a compute platform on GCP: the Hold/Release Adapter, the Fraud Orchestration Service, and the Ledger-of-Intent Service (application tier). All three are stateless request/event handlers, share the same deployment cadence, and carry the same latency-sensitive constraints — NFR-4 requires fraud-scoring decisions in ≤300ms, and NFR-3 requires end-to-end posting latency ≤5 seconds. `requirements.md` also flags a cloud-skills gap at Palisade: this is a bank whose engineering organization has run a mainframe and a vendor-licensed digital banking platform, not a Kubernetes estate. A fourth new-build component, the nightly **Reconciliation Process** ([ADR-003](ADR-003-provisional-vs-confirmed-state-model.md)), needs its own answer within the same decision.
+
+## Decision
+
+The three always-on, latency-sensitive services run on **Google Cloud Run**, each as its own Cloud Run service, with a minimum-instance count of 2 per service to avoid cold-start latency on the fraud-scoring and hold/release paths, and Cloud Run's built-in autoscaling following payment-volume variability. The nightly **Reconciliation Process** runs as a **Cloud Run Job** — a first-class, run-to-completion resource type distinct from a Cloud Run service — triggered nightly by **Cloud Scheduler**, in the same Cloud Run environment as the three always-on services.
+
+## Alternatives Considered (rejected, retained here rather than deleted)
+
+1. **Google Kubernetes Engine (GKE).** Rejected — GKE gives more low-level control than this workload needs (three uniform, stateless services, not a large heterogeneous microservices estate), and its cluster and node-pool management overhead falls directly on a team `requirements.md` already flags as short on cloud-native skills. Same reasoning [ADR-005](ADR-005-azure-compute-platform.md) and [ADR-011](ADR-011-aws-compute-platform.md) used to reject AKS and EKS.
+2. **Cloud Functions (2nd gen) for the three real-time services.** Rejected as the *primary* platform for the fraud-scoring path specifically, for the same reason Azure Functions and AWS Lambda were both rejected: a consumption-style, per-invocation function platform is a weaker fit for a component that must reliably clear NFR-4's 300ms budget on every call, and the Ledger-of-Intent Service's application tier benefits from a persistent connection pool to Cloud SQL that a long-lived, always-warm service manages more naturally than a function invocation. Every platform track in this case study has independently rejected its own "functions" product for this exact reason — a genuine, recurring finding, not a platform-specific one.
+3. **App Engine.** Rejected — App Engine is an older, more opinionated PaaS than Cloud Run, with less natural fit for arbitrary containerized services and less current adoption for new container-based workloads than Cloud Run, which is Google's own recommended default for this class of problem today.
+4. **A fourth always-on Cloud Run service for the Reconciliation Process**, mirroring the other three. Rejected — the Reconciliation Process runs once nightly, after the batch window closes; keeping an instance running continuously for a job that fires once a day is unnecessary cost and operational surface with no latency benefit, since neither NFR-3 nor NFR-4 applies to a process that isn't customer-facing.
+5. **A separate Cloud Function (2nd gen), triggered by Cloud Scheduler, for the Reconciliation Process specifically.** Considered — rejected in favor of keeping every new-build compute workload on one platform (Cloud Run) rather than introducing a second compute service for a single job — the same "one consistent compute model" reasoning [ADR-005](ADR-005-azure-compute-platform.md) and [ADR-011](ADR-011-aws-compute-platform.md) used for Azure and AWS.
+
+## Consequences
+
+- **Positive:** One consistent compute model across all four new-build components — the three always-on services and the nightly job — simplifies operations, observability, and the team's learning curve, directly responsive to the cloud-skills-gap constraint.
+- **Positive:** Cloud Run's autoscaling on the always-on services means capacity follows real-time-payment volume without a human resizing anything, consistent with driver 3 (flattening the cost trajectory). The Reconciliation Job takes this further: it costs nothing to run at all outside its nightly trigger window.
+- **Negative / accepted trade-off:** Cloud Run offers less low-level infrastructure control than GKE would (e.g., custom networking, node-level tuning). Accepted because none of the four components need that control today.
+- **Note for Step 9:** Unlike AWS's ECS — which has no first-class "job" resource and needed a scheduled `RunTask` workaround ([ADR-011](ADR-011-aws-compute-platform.md)) — Cloud Run Jobs is a genuine, first-class GCP resource type built for exactly this run-to-completion pattern, the same shape Azure Container Apps Jobs provides. Worth carrying into Step 10: on this specific point, GCP and Azure both have a purpose-built answer where AWS's serverless-container platform does not.
+- **Carried to Step 13:** Exact instance counts, CPU/memory allocation, and scaling thresholds, along with the Reconciliation Job's Cloud Scheduler cron expression and timeout settings, are a cost-and-sizing exercise, deferred to Step 13 by this case study's convention.
