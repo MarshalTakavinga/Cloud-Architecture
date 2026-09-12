@@ -21,7 +21,7 @@ This case study runs all **four** implementation tracks — Azure, AWS, GCP, and
 | 2–3. Requirements and NFRs | Done — [`docs/requirements.md`](docs/requirements.md) |
 | 4. Architecture options and styles | Done — [`docs/architecture-options-and-styles.md`](docs/architecture-options-and-styles.md), [ADR-001](adr/ADR-001-mainframe-integration-approach.md), [ADR-002](adr/ADR-002-payment-hub-build-vs-buy.md), [target-style diagram (Mermaid)](diagrams/target-architecture-style.md), [target-style diagram](diagrams/target-architecture-style.png) — 6-R disposition per component; mainframe integration approach (hybrid sync-hold + CDC); build-vs-buy for the payments rail/fraud/ledger-of-intent layer |
 | 5. Vendor-neutral logical design | Done — [`docs/logical-design.md`](docs/logical-design.md), [ADR-003](adr/ADR-003-provisional-vs-confirmed-state-model.md), [ADR-004](adr/ADR-004-idempotency-and-exactly-once-delivery.md), [logical-architecture diagram (Mermaid)](diagrams/logical-architecture.md), [logical-architecture diagram](diagrams/logical-architecture.png) — logical component model, end-to-end payment data flow, provisional-vs-confirmed reconciliation model, idempotency/exactly-once approach |
-| 6. Azure implementation | Done — [`docs/azure-implementation.md`](docs/azure-implementation.md), [ADR-005](adr/ADR-005-azure-compute-platform.md), [ADR-006](adr/ADR-006-azure-ledger-of-intent-database.md), [ADR-007](adr/ADR-007-azure-messaging.md), [ADR-008](adr/ADR-008-hybrid-connectivity.md), [ADR-009](adr/ADR-009-azure-identity.md), [ADR-010](adr/ADR-010-azure-landing-zone-and-segmentation.md), [Azure implementation diagram](diagrams/azure-implementation-architecture.md) — compute platform (Container Apps), data store (Azure SQL + Ledger), messaging (Service Bus Premium/sessions), hybrid connectivity (ExpressRoute), identity (Entra ID + Managed Identities), landing zone/segmentation (hub-spoke) |
+| 6. Azure implementation | Done — [`docs/azure-implementation.md`](docs/azure-implementation.md), [ADR-005](adr/ADR-005-azure-compute-platform.md), [ADR-006](adr/ADR-006-azure-ledger-of-intent-database.md), [ADR-007](adr/ADR-007-azure-messaging.md), [ADR-008](adr/ADR-008-hybrid-connectivity.md), [ADR-009](adr/ADR-009-azure-identity.md), [ADR-010](adr/ADR-010-azure-landing-zone-and-segmentation.md), [Azure implementation diagram](diagrams/azure-implementation-architecture.png) — compute platform (Container Apps for the three real-time services + a Container Apps Job for nightly reconciliation), data store (Azure SQL + Ledger), messaging (Service Bus Premium/sessions), hybrid connectivity (ExpressRoute), identity (Entra ID + Managed Identities), landing zone/segmentation (hub-spoke) |
 | 7. AWS implementation | Not started |
 | 8. GCP implementation | Not started |
 | 9. Private-cloud implementation | Not started |
@@ -49,7 +49,7 @@ case-study-02-banking-modernization/
 │   ├── ADR-002-payment-hub-build-vs-buy.md               # buy the rail gateway, build fraud/ledger-of-intent (done)
 │   ├── ADR-003-provisional-vs-confirmed-state-model.md   # reconciliation between real-time and batch state (done)
 │   ├── ADR-004-idempotency-and-exactly-once-delivery.md  # end-to-end idempotency key, exactly-once posting (done)
-│   ├── ADR-005-azure-compute-platform.md                 # Azure Container Apps for the three new services (done)
+│   ├── ADR-005-azure-compute-platform.md                 # Azure Container Apps for the three services + a Container Apps Job for nightly reconciliation (done)
 │   ├── ADR-006-azure-ledger-of-intent-database.md        # Azure SQL Database + SQL Ledger + Blob archive (done)
 │   ├── ADR-007-azure-messaging.md                        # Azure Service Bus Premium, sessions (done)
 │   ├── ADR-008-hybrid-connectivity.md                    # ExpressRoute + VPN failover (done)
@@ -69,5 +69,5 @@ case-study-02-banking-modernization/
     ├── logical-architecture.md             # (Step 5) Mermaid sequence diagram — end-to-end payment flow (done)
     ├── logical-architecture.png            # (Step 5) numbered swim-lane flow diagram, verified against docs (done)
     ├── current-state-architecture.png      # (Step 1) current-state deployment diagram, verified against docs/current-state.md (done)
-    └── azure-implementation-architecture.md # (Step 6) Mermaid deployment diagram — landing zone, spokes, services (done)
+    └── azure-implementation-architecture.png # (Step 6) deployment diagram — landing zone, spokes, services, verified against docs (done)
 ```

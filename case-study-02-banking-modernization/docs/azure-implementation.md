@@ -4,6 +4,8 @@
 
 [Step 5](logical-design.md) defined nine logical components and their contracts without naming a single platform service. This step answers, for Azure specifically: what does each of those components actually run on, what does the network and identity model look like, and what decisions were forced by Azure's own service boundaries? Steps 7–9 will ask the same questions independently for AWS, GCP, and private cloud — none of those tracks are allowed to simply copy this one's answers, and where a later track's answer differs for a genuinely platform-native reason, that's the point of running all four.
 
+All nine Step 5 components get a home below — including the Reconciliation Process, which the first pass of this document initially left unmapped (caught while cross-checking the Step 6 diagram against this table; see [ADR-005](../adr/ADR-005-azure-compute-platform.md), now updated to cover it).
+
 ## Service Mapping
 
 | Logical Component (Step 5) | Azure Service | Decision Recorded In |
@@ -15,6 +17,7 @@
 | Ledger-of-Intent Service (data store) | Azure SQL Database | [ADR-006](../adr/ADR-006-azure-ledger-of-intent-database.md) |
 | Event Bus | Azure Service Bus (Premium, sessions enabled) | [ADR-007](../adr/ADR-007-azure-messaging.md) |
 | CDC Connector / Hold-Release path to the mainframe | Azure ExpressRoute (VPN as backup) | [ADR-008](../adr/ADR-008-hybrid-connectivity.md) |
+| Reconciliation Process (nightly, [ADR-003](../adr/ADR-003-provisional-vs-confirmed-state-model.md)) | Azure Container Apps Jobs — a scheduled, cron-triggered job in the same Container Apps environment as the three always-on services, rather than a separate always-on service | [ADR-005](../adr/ADR-005-azure-compute-platform.md) |
 | Identity (workforce + workload) | Microsoft Entra ID, federated to Palisade's on-prem Active Directory; Managed Identities for service-to-service auth | [ADR-009](../adr/ADR-009-azure-identity.md) |
 | Landing zone / network segmentation | Azure Landing Zone (hub-spoke), private endpoints, Azure Policy, Microsoft Defender for Cloud | [ADR-010](../adr/ADR-010-azure-landing-zone-and-segmentation.md) |
 | Audit/Compliance Log | Azure SQL Database (append-only table, immutability via Azure SQL Ledger feature) with long-term archive to Azure Blob Storage (immutable/WORM policy) for the 7-year NFR-7 retention | [ADR-006](../adr/ADR-006-azure-ledger-of-intent-database.md) |
