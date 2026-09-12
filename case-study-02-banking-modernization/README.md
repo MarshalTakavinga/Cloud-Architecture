@@ -12,7 +12,7 @@ This case study runs all **four** implementation tracks — Azure, AWS, GCP, and
 
 ## Status
 
-**Steps 1–9 of 13 complete.**
+**All 13 of 13 steps are complete.**
 
 | Step | Status |
 | --- | --- |
@@ -25,10 +25,10 @@ This case study runs all **four** implementation tracks — Azure, AWS, GCP, and
 | 7. AWS implementation | Done — [`docs/aws-implementation.md`](docs/aws-implementation.md), [ADR-011](adr/ADR-011-aws-compute-platform.md), [ADR-012](adr/ADR-012-aws-ledger-of-intent-database.md), [ADR-013](adr/ADR-013-aws-messaging.md), [ADR-014](adr/ADR-014-aws-hybrid-connectivity.md), [ADR-015](adr/ADR-015-aws-identity.md), [ADR-016](adr/ADR-016-aws-landing-zone-and-segmentation.md) — compute platform (Fargate on ECS for the three real-time services + a scheduled Fargate task for nightly reconciliation), data store (Aurora PostgreSQL + S3 Object Lock archive), messaging (SNS FIFO + per-consumer SQS FIFO queues), hybrid connectivity (Direct Connect), identity (IAM Identity Center + AD Connector + IAM roles for tasks), landing zone (Control Tower multi-account Organization, enrolling the existing 2021 account rather than rebuilding it) |
 | 8. GCP implementation | Done — [`docs/gcp-implementation.md`](docs/gcp-implementation.md), [ADR-017](adr/ADR-017-gcp-compute-platform.md), [ADR-018](adr/ADR-018-gcp-ledger-of-intent-database.md), [ADR-019](adr/ADR-019-gcp-messaging.md), [ADR-020](adr/ADR-020-gcp-hybrid-connectivity.md), [ADR-021](adr/ADR-021-gcp-identity.md), [ADR-022](adr/ADR-022-gcp-landing-zone-and-segmentation.md) — compute platform (Cloud Run for the three real-time services + a Cloud Run Job for nightly reconciliation), data store (Cloud SQL for PostgreSQL + Cloud Storage Bucket Lock archive), messaging (a single Pub/Sub topic with ordering keys and four subscriptions), hybrid connectivity (Dedicated Interconnect), identity (Workforce Identity Federation + Workload Identity), landing zone (Resource Manager folders/projects, Organization Policy, Security Command Center) |
 | 9. Private-cloud implementation | Done — [`docs/private-cloud-implementation.md`](docs/private-cloud-implementation.md), [ADR-023](adr/ADR-023-private-cloud-platform-and-facility-strategy.md), [ADR-024](adr/ADR-024-private-cloud-compute-platform.md), [ADR-025](adr/ADR-025-private-cloud-database.md), [ADR-026](adr/ADR-026-private-cloud-network-topology.md), [ADR-027](adr/ADR-027-private-cloud-identity.md), [ADR-028](adr/ADR-028-private-cloud-messaging.md) — VMware Cloud Foundation built in Palisade's own existing primary + secondary data centers (no new facility needed), Tanzu Kubernetes Grid compute (the one track that can't avoid the Kubernetes-ops burden every hyperscaler track avoided), self-managed HA PostgreSQL, NSX micro-segmentation with zero hybrid-connectivity cost (same facility as the mainframe), direct on-prem AD join for identity, self-managed RabbitMQ for messaging |
-| 10. Decision matrix | Not started |
-| 11. Recommended platform / target architecture | Not started |
-| 12. Migration roadmap and ADRs | Not started |
-| 13. Cost and risk analysis | Not started |
+| 10. Decision matrix | Done — [`docs/decision-matrix.md`](docs/decision-matrix.md), [ADR-029](adr/ADR-029-cloud-platform-selection.md) — a 6-criterion weighted matrix traced to `requirements.md`'s own priority weighting. Azure wins at 4.25/5.00 (85.0%), AWS a close second at 4.10/5.00 (82.0%), GCP third at 3.93/5.00 (78.5%), private cloud fourth at 3.40/5.00 (68.0%) — decided primarily by Azure's SQL Ledger being the only database-native cryptographic audit guarantee among all four tracks, the highest-weighted criterion. Every other platform's genuine strengths (AWS's 2021-account schedule advantage, GCP's Pub/Sub cost edge, private cloud's zero-latency same-facility placement) are named, not hidden by the result. |
+| 11. Recommended platform / target architecture | Done — [`docs/target-architecture.md`](docs/target-architecture.md) — confirms Azure (ADR-029) as final, restates the target architecture at a glance, and traces each of the four forcing functions to the specific mechanism that closes it, while carrying forward every item Step 10 left explicitly open (rollout sequencing, sizing, IaC templates, the still-undecided CICS transaction). |
+| 12. Migration roadmap and ADRs | Done — [`docs/migration-roadmap.md`](docs/migration-roadmap.md), [ADR-030](adr/ADR-030-rollout-sequencing.md), [ADR-031](adr/ADR-031-kill-switch-and-rollback-strategy.md) — a 5-phase rollout plan built on one key insight: unlike Case Study 1, this is a net-new capability rollout, not a production cutover, so the 2021 AWS account migration is deliberately decoupled into parallel Phase 5 work rather than sequenced against the board-committed 18-month deadline. Rollback is a feature-flag kill-switch, not a traffic-weight revert, since there is no pre-existing real-time path to fall back to. |
+| 13. Cost and risk analysis | Done — [`docs/cost-and-risk-analysis.md`](docs/cost-and-risk-analysis.md) — an illustrative steady-state run-rate (~$383,600/year) anchored to Step 6's named Azure services, with the bought ISO 20022/FedNow gateway license alone accounting for ~83% of it; stated plainly that this is not a cost-reduction case study since the mainframe's own cost is untouched, and the value case rests on NFR-9's MIPS-growth-avoidance target and the OCC/competitive drivers, not on displacing existing spend. A 14-item risk register consolidates every risk named across all 31 ADRs. |
 
 ## Repository Structure
 
@@ -83,7 +83,7 @@ case-study-02-banking-modernization/
 │   ├── security/
 │   ├── data/
 │   └── dr/
-├── terraform/                     # IaC — not started, platform not yet chosen
+├── terraform/                     # IaC — platform now chosen (Azure, ADR-029); Bicep modules are this track's primary IaC target, not yet built
 └── diagrams/
     ├── target-architecture-style.md        # (Step 4) Mermaid target-style diagram, diagrams-as-code (done)
     ├── target-architecture-style.png       # (Step 4) target-style diagram, verified against docs (done)
