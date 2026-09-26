@@ -25,7 +25,7 @@ Two contrasts with earlier case studies run through this one:
 | 4. Architecture options and styles | Done — [`docs/architecture-options-and-styles.md`](docs/architecture-options-and-styles.md), [ADR-001](adr/ADR-001-edge-cloud-responsibility-split.md), [ADR-002](adr/ADR-002-plant-data-integration-pattern.md), [ADR-003](adr/ADR-003-ot-segmentation-reference-architecture.md), [target-style diagram (Mermaid)](diagrams/target-architecture-style.md): 6-R disposition per component; edge-first/cloud-for-scale split; a Unified Namespace per plant (MQTT + Sparkplug B, ISA-95 topics); IEC 62443 zones/conduits with an outbound-only DMZ bridge. Target style: edge-first, event-driven hub-and-spoke with a US/EU regional split |
 | 5. Vendor-neutral logical design | Done — [`docs/logical-design.md`](docs/logical-design.md), [ADR-004](adr/ADR-004-genealogy-exactly-once-record-path.md), [ADR-005](adr/ADR-005-store-and-forward-and-backfill-lanes.md), [logical-architecture diagrams (Mermaid)](diagrams/logical-architecture.md): 10 plant-tier and 13 cloud-tier logical components; one OEE definition; five end-to-end flows (predictive maintenance, WAN outage/backfill, genealogy, recall scoping, model lifecycle); genealogy made exactly-once with a hash-chained edge journal + idempotent keyed insert (not MQTT QoS 2); four-lane priority outbox + separate cloud backfill stream so a reconnecting plant can't stall live processing |
 | 6. Azure implementation (incl. edge) | Done — [`docs/azure-implementation.md`](docs/azure-implementation.md), [ADR-006](adr/ADR-006-azure-edge-platform.md) to [ADR-011](adr/ADR-011-azure-network-identity-and-deployment.md), [Azure diagram (Mermaid)](diagrams/azure-implementation-architecture.md): Azure IoT Operations on 3-node Arc-enabled K3s per plant; four-lane outbox built from native data flows plus a Kestrel journal forwarder and gap-based backfill uploader; Event Hubs Premium (live/alerts/backfill/genealogy hubs); Fabric Eventhouse + Lakehouse, Stream Analytics hot path (live only), Logic Apps to SAP; Azure SQL Hyperscale append-only ledger tables for genealogy; Envoy DMZ proxy, ACR connected registry, and Flux for pull-only deployment. Two documented deviations carried to Step 9: IoT Operations' 72-hour offline ceiling, and JSON/CloudEvents rather than Sparkplug B |
-| 7. AWS implementation (incl. edge) | Not started |
+| 7. AWS implementation (incl. edge) | Done — [`docs/aws-implementation.md`](docs/aws-implementation.md), [ADR-012](adr/ADR-012-aws-edge-platform.md) to [ADR-017](adr/ADR-017-aws-network-identity-and-deployment.md), [AWS diagram (Mermaid)](diagrams/aws-implementation-architecture.md): Greengrass v2 + SiteWise Edge (MQTT-enabled) on an active/passive pair (Pacemaker/DRBD, which Kestrel must productionize, since Greengrass isn't natively HA); stream manager supplies the four lanes natively (priorities, TTL, bandwidth cap); Kinesis + Managed Flink; Timestream for InfluxDB + S3 Tables/Athena (Timestream for LiveAnalytics closed to new customers June 2025); Aurora PostgreSQL insert-only + S3 Object Lock for genealogy (QLDB retired July 2025); IoT Core per-node X.509; Identity Center federated to Entra |
 | 8. GCP implementation (incl. edge) | Not started |
 | 9. Decision matrix | Not started |
 | 10. Recommended platform / target architecture | Not started |
@@ -44,7 +44,8 @@ case-study-04-manufacturing-iot/
 │   ├── requirements.md                      # 7 capabilities, 12 NFRs, requirement/constraint/assumption/risk, priority weights (done)
 │   ├── architecture-options-and-styles.md   # (Step 4) 6-R disposition, 3 decisions, target style (done)
 │   ├── logical-design.md                    # (Step 5) component model, OEE definition, 5 flows, security (done)
-│   └── azure-implementation.md              # (Step 6) service mapping incl. edge, sizing, network, deviations (done)
+│   ├── azure-implementation.md              # (Step 6) service mapping incl. edge, sizing, network, deviations (done)
+│   └── aws-implementation.md                # (Step 7) service mapping incl. edge, sizing, network, deviations (done)
 ├── adr/
 │   ├── ADR-001-edge-cloud-responsibility-split.md          # edge-first, cloud-for-scale (done)
 │   ├── ADR-002-plant-data-integration-pattern.md           # Unified Namespace: MQTT + Sparkplug B, ISA-95 topics (done)
@@ -56,9 +57,16 @@ case-study-04-manufacturing-iot/
 │   ├── ADR-008-azure-ingestion-and-streaming.md            # Event Hubs Premium, 4 hubs per region (done)
 │   ├── ADR-009-azure-time-series-analytics-and-hot-path.md # Fabric RTI + Lakehouse, Stream Analytics, Logic Apps→SAP (done)
 │   ├── ADR-010-azure-genealogy-store.md                    # Azure SQL Hyperscale append-only ledger tables (done)
-│   └── ADR-011-azure-network-identity-and-deployment.md    # Envoy DMZ proxy, VPN, ACR connected registry, Flux (done)
+│   ├── ADR-011-azure-network-identity-and-deployment.md    # Envoy DMZ proxy, VPN, ACR connected registry, Flux (done)
+│   ├── ADR-012-aws-edge-platform.md                        # Greengrass v2 + SiteWise Edge, active/passive Pacemaker/DRBD (done)
+│   ├── ADR-013-aws-store-and-forward-implementation.md     # stream manager lanes + backfill controller (done)
+│   ├── ADR-014-aws-ingestion-and-hot-path.md               # Kinesis on-demand + Managed Flink, SQS→Lambda→SAP (done)
+│   ├── ADR-015-aws-time-series-and-analytics.md            # Timestream for InfluxDB + S3 Tables/Athena (done)
+│   ├── ADR-016-aws-genealogy-store.md                      # Aurora PostgreSQL insert-only + S3 Object Lock (done)
+│   └── ADR-017-aws-network-identity-and-deployment.md      # proxy, VPN+TGW, IoT Core X.509, Identity Center→Entra (done)
 └── diagrams/
     ├── target-architecture-style.md         # (Step 4) Mermaid target-style diagram (done)
     ├── logical-architecture.md              # (Step 5) Mermaid component model + genealogy sequence (done)
-    └── azure-implementation-architecture.md # (Step 6) Mermaid Azure deployment diagram (done)
+    ├── azure-implementation-architecture.md # (Step 6) Mermaid Azure deployment diagram (done)
+    └── aws-implementation-architecture.md   # (Step 7) Mermaid AWS deployment diagram (done)
 ```
