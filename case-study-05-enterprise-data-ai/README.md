@@ -32,7 +32,7 @@ Contrasts with earlier case studies:
 | 8. GCP implementation (native vs. Databricks/Snowflake) | Done — [`docs/gcp-implementation.md`](docs/gcp-implementation.md), [ADR-021](adr/ADR-021-gcp-data-platform.md) to [ADR-026](adr/ADR-026-gcp-network-identity-finops.md), [GCP diagram (Mermaid)](diagrams/gcp-implementation-architecture.md): chosen stack is **GCP-native**. Components: BigQuery (serverless) with Iceberg-managed tables; Dataplex + BigQuery policy tags and row policies; Sensitive Data Protection; VPC Service Controls; Datastream CDC; a **first-party GA translator for Teradata SQL, BTEQ, and TPT**; Vertex AI Vector Search (hot) + BigQuery search index under row-level security (warm); Gemini (caching off, abuse-monitoring exception) + **Claude US multi-region endpoint (GA 15 May 2026)**; **Apigee** gateway with Model Armor; Bucket Lock audit; billing export to BigQuery. Vertex AI Search ACLs were rejected (preview, permanent once set). Databricks on GCP is the runner-up |
 | 9. Decision matrix | Done — [`docs/decision-matrix.md`](docs/decision-matrix.md), [ADR-027](adr/ADR-027-cloud-platform-selection.md): 6 weighted criteria from requirements.md. **GCP-native wins at 3.90/5.00 (78.0%)**, ahead of Azure (Databricks core) at 3.68 and AWS-native at 3.55. The lead rests on the first-party GA Teradata translator (SQL/BTEQ/TPT) and serverless operations. It holds under every re-weighting and under either GCP risk alone, but flips to Azure if both the Iceberg-parity and model-terms risks materialize. Gate G0 (Iceberg-parity PoC, model-terms confirmation, translation PoC) must pass before the Teradata notice date. The 'Databricks everywhere' variant was checked and scores 3.70 |
 | 10. Recommended platform / target architecture | Done — [`docs/target-architecture.md`](docs/target-architecture.md): confirms GCP-native (ADR-027) and gives the at-a-glance ingestion, lakehouse, governance, AI, and FinOps architecture. Gate G0 is designed in, with a failure path for each check. All 4 forcing functions and the invariant are traced to mechanisms, with an NFR-1 to NFR-12 coverage table. Teradata timing/bridge, assistant decoupling, SAS retirement, and the Snowflake account are carried to Step 11 |
-| 11. Migration roadmap and ADRs | Not started |
+| 11. Migration roadmap and ADRs | Done — [`docs/migration-roadmap.md`](docs/migration-roadmap.md), [ADR-028](adr/ADR-028-teradata-contract-and-exit-sequencing.md) to [ADR-030](adr/ADR-030-domain-dual-run-and-rollback.md), [Gantt (Mermaid)](diagrams/migration-roadmap.md): three tracks on different clocks. The **governed AI assistant is decoupled** from the Teradata exit: pilot at M6 (~300 adjusters), scale by M14. **Teradata notice plus a one-year bridge** at M3 after G0, because exiting by June 2027 isn't credible. The exit goes domain by domain (claims, policy/billing, reserving with two parallel quarterly closes, regulatory), with 20-day clean reconciliation gates. The freeze is at M18, and Teradata and Informatica are switched off at M20 (May 2028), one month inside the bridge. SAS is retired by M24. Rollback means repointing consumers to Teradata until the freeze, then fix-forward |
 | 12. Cost, FinOps, and risk analysis | Not started |
 
 ## Repository Structure
@@ -51,7 +51,8 @@ case-study-05-enterprise-data-ai/
 │   ├── aws-implementation.md                # (Step 7) 3-way comparison, AWS-native stack, deviations (done)
 │   ├── gcp-implementation.md                # (Step 8) 3-way comparison, GCP-native stack, deviations (done)
 │   ├── decision-matrix.md                   # (Step 9) weighted matrix, sensitivity, what the others do better (done)
-│   └── target-architecture.md               # (Step 10) GCP target, G0 designed in, driver tracing, NFR coverage (done)
+│   ├── target-architecture.md               # (Step 10) GCP target, G0 designed in, driver tracing, NFR coverage (done)
+│   └── migration-roadmap.md                 # (Step 11) 3 tracks, phases 0-8, gates G0/A1/A2/D/T, rollback (done)
 ├── adr/
 │   ├── ADR-001-lakehouse-on-open-tables.md          # medallion lakehouse, Iceberg/Delta, second engine required (done)
 │   ├── ADR-002-unified-governance-plane.md          # one catalog/policy plane for data + AI assets (done)
@@ -79,12 +80,16 @@ case-study-05-enterprise-data-ai/
 │   ├── ADR-024-gcp-models-and-ai-gateway.md         # Gemini + Claude US multi-region behind Apigee (done)
 │   ├── ADR-025-gcp-ingestion-and-teradata-migration.md  # Datastream, Document AI, translator SQL/BTEQ/TPT (done)
 │   ├── ADR-026-gcp-network-identity-finops.md       # Interconnect + Transfer Appliance, WIF⇄Entra, reservations (done)
-│   └── ADR-027-cloud-platform-selection.md          # GCP-native selected, gated by G0 (done)
+│   ├── ADR-027-cloud-platform-selection.md          # GCP-native selected, gated by G0 (done)
+│   ├── ADR-028-teradata-contract-and-exit-sequencing.md  # notice + 1-year bridge, exit by domain (done)
+│   ├── ADR-029-decoupled-assistant-rollout.md       # assistant pilot M6, scale M14, gates A1/A2 (done)
+│   └── ADR-030-domain-dual-run-and-rollback.md      # dual-run per domain, rollback until M18 freeze (done)
 ├── diagrams/
 │   ├── target-architecture-style.md                 # (Step 4) Mermaid reference (done)
 │   ├── logical-architecture.md                      # (Step 5) Mermaid component model + assistant sequence (done)
 │   ├── azure-implementation-architecture.md         # (Step 6) Mermaid Azure track (done)
 │   ├── aws-implementation-architecture.md           # (Step 7) Mermaid AWS track (done)
-│   └── gcp-implementation-architecture.md           # (Step 8) Mermaid GCP track (done)
+│   ├── gcp-implementation-architecture.md           # (Step 8) Mermaid GCP track (done)
+│   └── migration-roadmap.md                         # (Step 11) Mermaid Gantt (done)
 └── finance/
 ```
