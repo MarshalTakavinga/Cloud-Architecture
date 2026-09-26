@@ -22,7 +22,7 @@ Two contrasts with earlier case studies run through this one:
 | 1. Business problem | Done — [`docs/problem-statement.md`](docs/problem-statement.md) |
 | Current-state architecture | Done — [`docs/current-state.md`](docs/current-state.md); diagram not yet drawn |
 | 2–3. Capabilities, requirements, and NFRs | Done — [`docs/requirements.md`](docs/requirements.md) |
-| 4. Architecture options and styles | Not started |
+| 4. Architecture options and styles | Done — [`docs/architecture-options-and-styles.md`](docs/architecture-options-and-styles.md), [ADR-001](adr/ADR-001-edge-cloud-responsibility-split.md), [ADR-002](adr/ADR-002-plant-data-integration-pattern.md), [ADR-003](adr/ADR-003-ot-segmentation-reference-architecture.md), [target-style diagram (Mermaid)](diagrams/target-architecture-style.md): 6-R disposition per component; edge-first/cloud-for-scale split; a Unified Namespace per plant (MQTT + Sparkplug B, ISA-95 topics); IEC 62443 zones/conduits with an outbound-only DMZ bridge. Target style: edge-first, event-driven hub-and-spoke with a US/EU regional split |
 | 5. Vendor-neutral logical design | Not started |
 | 6. Azure implementation (incl. edge) | Not started |
 | 7. AWS implementation (incl. edge) | Not started |
@@ -39,9 +39,14 @@ case-study-04-manufacturing-iot/
 │
 ├── README.md
 ├── docs/
-│   ├── problem-statement.md   # organization, 4 forcing functions, 5 ranked drivers (done)
-│   ├── current-state.md       # 12-plant estate, Purdue-level architecture, data flows, OT security as-is (done)
-│   └── requirements.md        # 7 capabilities, 12 NFRs, requirement/constraint/assumption/risk, priority weights (done)
+│   ├── problem-statement.md                 # organization, 4 forcing functions, 5 ranked drivers (done)
+│   ├── current-state.md                     # 12-plant estate, Purdue-level architecture, data flows, OT security as-is (done)
+│   ├── requirements.md                      # 7 capabilities, 12 NFRs, requirement/constraint/assumption/risk, priority weights (done)
+│   └── architecture-options-and-styles.md   # (Step 4) 6-R disposition, 3 decisions, target style (done)
 ├── adr/
+│   ├── ADR-001-edge-cloud-responsibility-split.md          # edge-first, cloud-for-scale (done)
+│   ├── ADR-002-plant-data-integration-pattern.md           # Unified Namespace: MQTT + Sparkplug B, ISA-95 topics (done)
+│   └── ADR-003-ot-segmentation-reference-architecture.md   # IEC 62443 zones/conduits, outbound-only DMZ bridge (done)
 └── diagrams/
+    └── target-architecture-style.md         # (Step 4) Mermaid target-style diagram (done)
 ```
