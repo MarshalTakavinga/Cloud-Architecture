@@ -23,7 +23,7 @@ Two contrasts with earlier case studies run through this one:
 | Current-state architecture | Done — [`docs/current-state.md`](docs/current-state.md); diagram not yet drawn |
 | 2–3. Capabilities, requirements, and NFRs | Done — [`docs/requirements.md`](docs/requirements.md) |
 | 4. Architecture options and styles | Done — [`docs/architecture-options-and-styles.md`](docs/architecture-options-and-styles.md), [ADR-001](adr/ADR-001-edge-cloud-responsibility-split.md), [ADR-002](adr/ADR-002-plant-data-integration-pattern.md), [ADR-003](adr/ADR-003-ot-segmentation-reference-architecture.md), [target-style diagram (Mermaid)](diagrams/target-architecture-style.md): 6-R disposition per component; edge-first/cloud-for-scale split; a Unified Namespace per plant (MQTT + Sparkplug B, ISA-95 topics); IEC 62443 zones/conduits with an outbound-only DMZ bridge. Target style: edge-first, event-driven hub-and-spoke with a US/EU regional split |
-| 5. Vendor-neutral logical design | Not started |
+| 5. Vendor-neutral logical design | Done — [`docs/logical-design.md`](docs/logical-design.md), [ADR-004](adr/ADR-004-genealogy-exactly-once-record-path.md), [ADR-005](adr/ADR-005-store-and-forward-and-backfill-lanes.md), [logical-architecture diagrams (Mermaid)](diagrams/logical-architecture.md): 10 plant-tier and 13 cloud-tier logical components; one OEE definition; five end-to-end flows (predictive maintenance, WAN outage/backfill, genealogy, recall scoping, model lifecycle); genealogy made exactly-once with a hash-chained edge journal + idempotent keyed insert (not MQTT QoS 2); four-lane priority outbox + separate cloud backfill stream so a reconnecting plant can't stall live processing |
 | 6. Azure implementation (incl. edge) | Not started |
 | 7. AWS implementation (incl. edge) | Not started |
 | 8. GCP implementation (incl. edge) | Not started |
@@ -42,11 +42,15 @@ case-study-04-manufacturing-iot/
 │   ├── problem-statement.md                 # organization, 4 forcing functions, 5 ranked drivers (done)
 │   ├── current-state.md                     # 12-plant estate, Purdue-level architecture, data flows, OT security as-is (done)
 │   ├── requirements.md                      # 7 capabilities, 12 NFRs, requirement/constraint/assumption/risk, priority weights (done)
-│   └── architecture-options-and-styles.md   # (Step 4) 6-R disposition, 3 decisions, target style (done)
+│   ├── architecture-options-and-styles.md   # (Step 4) 6-R disposition, 3 decisions, target style (done)
+│   └── logical-design.md                    # (Step 5) component model, OEE definition, 5 flows, security (done)
 ├── adr/
 │   ├── ADR-001-edge-cloud-responsibility-split.md          # edge-first, cloud-for-scale (done)
 │   ├── ADR-002-plant-data-integration-pattern.md           # Unified Namespace: MQTT + Sparkplug B, ISA-95 topics (done)
-│   └── ADR-003-ot-segmentation-reference-architecture.md   # IEC 62443 zones/conduits, outbound-only DMZ bridge (done)
+│   ├── ADR-003-ot-segmentation-reference-architecture.md   # IEC 62443 zones/conduits, outbound-only DMZ bridge (done)
+│   ├── ADR-004-genealogy-exactly-once-record-path.md       # hash-chained edge journal + idempotent keyed insert (done)
+│   └── ADR-005-store-and-forward-and-backfill-lanes.md     # 4-lane priority outbox, separate backfill stream (done)
 └── diagrams/
-    └── target-architecture-style.md         # (Step 4) Mermaid target-style diagram (done)
+    ├── target-architecture-style.md         # (Step 4) Mermaid target-style diagram (done)
+    └── logical-architecture.md              # (Step 5) Mermaid component model + genealogy sequence (done)
 ```
