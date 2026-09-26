@@ -62,3 +62,13 @@ The margin over Azure is narrow, so the decision is **conditional**. The conditi
 - **Negative / accepted trade-off:** Kestrel takes on the most edge integration of the three tracks: three vendors plus the custom outbox. Conditions 2 and 3 are the mitigation, and both are costed in Step 12.
 - **Negative / accepted trade-off:** Genealogy immutability rests on controls and evidence, not on engine enforcement. Condition 1 and the audit review trigger keep that visible.
 - **Portfolio note:** Case Studies 2 and 3 selected Azure, and Case Study 1 selected AWS. GCP winning here comes from the weighting, not from a wish for variety. The sensitivity table shows exactly what would have to be true for Azure to win instead.
+
+## Addendum — Step 12 Trigger Test (cost)
+
+[`docs/cost-and-risk-analysis.md`](../docs/cost-and-risk-analysis.md) tested the cost review trigger with the illustrative model in [`finance/TCO-Analysis.xlsx`](../finance/TCO-Analysis.xlsx).
+
+- **Result:** GCP's five-year edge licence stack is about $2.10M. The trigger fires for any Azure IoT Operations price **below about $980 per node-month**, and Microsoft does not publish that price.
+- **Effect on the decision:** re-scoring the economics criterion with this evidence (Azure 3.5, GCP 2.5) gives **Azure 3.90 against GCP 3.88**, which flips the decision.
+- **Effect on the program:** the difference is about 2–3% of annual value, so the business case holds either way.
+
+**Status change:** this ADR stays Approved, but it is **subject to gate G0 (commercial confirmation, by M3)**. Before any platform-specific commitment, binding quotes for GDC, Manufacturing Connect edge, the broker, and Azure IoT Operations are obtained and the model is re-run. If the trigger fires on real prices, the Step 9 economics criterion is re-scored and this decision is re-affirmed or reversed. Everything scheduled before G0 (Phase 0 security, sensors, tag mapping to ISA-95, and the genealogy recorder design) is platform-neutral, so neither outcome wastes work.

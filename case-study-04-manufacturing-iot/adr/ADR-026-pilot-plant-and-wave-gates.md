@@ -24,6 +24,7 @@
 
 | Gate | Pass criterion |
 |---|---|
+| G0 Commercial confirmation (by M3, before any platform-specific commitment) | Binding quotes for GDC, Manufacturing Connect edge, the broker, and Azure IoT Operations. The TCO model is re-run, and ADR-024 is re-affirmed or reversed if its cost trigger fires (added in Step 12) |
 | G1 Outbox acceptance | The full suite passes on plant hardware: outage injection, backfill under the rate cap, lane-starvation tests, and replay idempotency |
 | G2 Autonomy drill | The WAN is deliberately cut for **72 hours**. Production, local alerts, and genealogy continue. On reconnect the plant is live in under 60 seconds, the backlog drains under the cap, and cloud-side completeness is at least 99.99% (NFR-6) |
 | G3 Genealogy parallel run | At least 30 days with **zero** reconciliation mismatches against the MES or paper record. A `SerialHeld` rate above zero is explained and resolved. Hash-chain verification is clean. |
