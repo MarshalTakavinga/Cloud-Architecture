@@ -24,7 +24,7 @@ Two contrasts with earlier case studies run through this one:
 | 2–3. Capabilities, requirements, and NFRs | Done — [`docs/requirements.md`](docs/requirements.md) |
 | 4. Architecture options and styles | Done — [`docs/architecture-options-and-styles.md`](docs/architecture-options-and-styles.md), [ADR-001](adr/ADR-001-edge-cloud-responsibility-split.md), [ADR-002](adr/ADR-002-plant-data-integration-pattern.md), [ADR-003](adr/ADR-003-ot-segmentation-reference-architecture.md), [target-style diagram (Mermaid)](diagrams/target-architecture-style.md): 6-R disposition per component; edge-first/cloud-for-scale split; a Unified Namespace per plant (MQTT + Sparkplug B, ISA-95 topics); IEC 62443 zones/conduits with an outbound-only DMZ bridge. Target style: edge-first, event-driven hub-and-spoke with a US/EU regional split |
 | 5. Vendor-neutral logical design | Done — [`docs/logical-design.md`](docs/logical-design.md), [ADR-004](adr/ADR-004-genealogy-exactly-once-record-path.md), [ADR-005](adr/ADR-005-store-and-forward-and-backfill-lanes.md), [logical-architecture diagrams (Mermaid)](diagrams/logical-architecture.md): 10 plant-tier and 13 cloud-tier logical components; one OEE definition; five end-to-end flows (predictive maintenance, WAN outage/backfill, genealogy, recall scoping, model lifecycle); genealogy made exactly-once with a hash-chained edge journal + idempotent keyed insert (not MQTT QoS 2); four-lane priority outbox + separate cloud backfill stream so a reconnecting plant can't stall live processing |
-| 6. Azure implementation (incl. edge) | Not started |
+| 6. Azure implementation (incl. edge) | Done — [`docs/azure-implementation.md`](docs/azure-implementation.md), [ADR-006](adr/ADR-006-azure-edge-platform.md) to [ADR-011](adr/ADR-011-azure-network-identity-and-deployment.md), [Azure diagram (Mermaid)](diagrams/azure-implementation-architecture.md): Azure IoT Operations on 3-node Arc-enabled K3s per plant; four-lane outbox built from native data flows plus a Kestrel journal forwarder and gap-based backfill uploader; Event Hubs Premium (live/alerts/backfill/genealogy hubs); Fabric Eventhouse + Lakehouse, Stream Analytics hot path (live only), Logic Apps to SAP; Azure SQL Hyperscale append-only ledger tables for genealogy; Envoy DMZ proxy, ACR connected registry, and Flux for pull-only deployment. Two documented deviations carried to Step 9: IoT Operations' 72-hour offline ceiling, and JSON/CloudEvents rather than Sparkplug B |
 | 7. AWS implementation (incl. edge) | Not started |
 | 8. GCP implementation (incl. edge) | Not started |
 | 9. Decision matrix | Not started |
@@ -43,14 +43,22 @@ case-study-04-manufacturing-iot/
 │   ├── current-state.md                     # 12-plant estate, Purdue-level architecture, data flows, OT security as-is (done)
 │   ├── requirements.md                      # 7 capabilities, 12 NFRs, requirement/constraint/assumption/risk, priority weights (done)
 │   ├── architecture-options-and-styles.md   # (Step 4) 6-R disposition, 3 decisions, target style (done)
-│   └── logical-design.md                    # (Step 5) component model, OEE definition, 5 flows, security (done)
+│   ├── logical-design.md                    # (Step 5) component model, OEE definition, 5 flows, security (done)
+│   └── azure-implementation.md              # (Step 6) service mapping incl. edge, sizing, network, deviations (done)
 ├── adr/
 │   ├── ADR-001-edge-cloud-responsibility-split.md          # edge-first, cloud-for-scale (done)
 │   ├── ADR-002-plant-data-integration-pattern.md           # Unified Namespace: MQTT + Sparkplug B, ISA-95 topics (done)
 │   ├── ADR-003-ot-segmentation-reference-architecture.md   # IEC 62443 zones/conduits, outbound-only DMZ bridge (done)
 │   ├── ADR-004-genealogy-exactly-once-record-path.md       # hash-chained edge journal + idempotent keyed insert (done)
-│   └── ADR-005-store-and-forward-and-backfill-lanes.md     # 4-lane priority outbox, separate backfill stream (done)
+│   ├── ADR-005-store-and-forward-and-backfill-lanes.md     # 4-lane priority outbox, separate backfill stream (done)
+│   ├── ADR-006-azure-edge-platform.md                      # Azure IoT Operations on 3-node K3s (done)
+│   ├── ADR-007-azure-store-and-forward-implementation.md   # native data flows + journal forwarder + backfill uploader (done)
+│   ├── ADR-008-azure-ingestion-and-streaming.md            # Event Hubs Premium, 4 hubs per region (done)
+│   ├── ADR-009-azure-time-series-analytics-and-hot-path.md # Fabric RTI + Lakehouse, Stream Analytics, Logic Apps→SAP (done)
+│   ├── ADR-010-azure-genealogy-store.md                    # Azure SQL Hyperscale append-only ledger tables (done)
+│   └── ADR-011-azure-network-identity-and-deployment.md    # Envoy DMZ proxy, VPN, ACR connected registry, Flux (done)
 └── diagrams/
     ├── target-architecture-style.md         # (Step 4) Mermaid target-style diagram (done)
-    └── logical-architecture.md              # (Step 5) Mermaid component model + genealogy sequence (done)
+    ├── logical-architecture.md              # (Step 5) Mermaid component model + genealogy sequence (done)
+    └── azure-implementation-architecture.md # (Step 6) Mermaid Azure deployment diagram (done)
 ```
