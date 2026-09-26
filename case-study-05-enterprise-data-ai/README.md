@@ -25,7 +25,7 @@ Contrasts with earlier case studies:
 | 1. Business problem | Done — [`docs/problem-statement.md`](docs/problem-statement.md) |
 | Current-state architecture | Done — [`docs/current-state.md`](docs/current-state.md); diagram not yet drawn |
 | 2–3. Capabilities, requirements, and NFRs | Done — [`docs/requirements.md`](docs/requirements.md) |
-| 4. Architecture options and styles | Not started |
+| 4. Architecture options and styles | Done — [`docs/architecture-options-and-styles.md`](docs/architecture-options-and-styles.md), [ADR-001](adr/ADR-001-lakehouse-on-open-tables.md) to [ADR-005](adr/ADR-005-teradata-migration-approach.md), [target-style diagram (Mermaid)](diagrams/target-architecture-style.md): 6-R disposition (Guidewire retained via CDC, ECM retained and indexed, Teradata replatformed, Informatica/SSRS retired, SAS retired gradually); a lakehouse on open tables with a medallion layout; one governance plane for data and AI assets (it doubles as the NAIC model inventory); permission-aware retrieval (ACL metadata on every chunk, pre-filtered search, a final authorization check, a red-team suite); an AI gateway through which every model call passes (ZDR or in-tenancy models only, immutable audit, metering); Teradata migration by rationalizing, translating, re-layering, and dual-running per domain |
 | 5. Vendor-neutral logical design | Not started |
 | 6. Azure implementation (native vs. Databricks/Snowflake) | Not started |
 | 7. AWS implementation (native vs. Databricks/Snowflake) | Not started |
@@ -44,8 +44,15 @@ case-study-05-enterprise-data-ai/
 ├── docs/
 │   ├── problem-statement.md   # organization, 4 forcing functions, 5 ranked drivers, the invariant (done)
 │   ├── current-state.md       # sources, Informatica, Teradata/SAS, ECM, governance, $6.8M/yr cost baseline (done)
-│   └── requirements.md        # 8 capabilities, 12 NFRs, requirement/constraint/assumption/risk, priority weights (done)
+│   ├── requirements.md        # 8 capabilities, 12 NFRs, requirement/constraint/assumption/risk, priority weights (done)
+│   └── architecture-options-and-styles.md   # (Step 4) 6-R, 4 decisions, target style (done)
 ├── adr/
+│   ├── ADR-001-lakehouse-on-open-tables.md          # medallion lakehouse, Iceberg/Delta, second engine required (done)
+│   ├── ADR-002-unified-governance-plane.md          # one catalog/policy plane for data + AI assets (done)
+│   ├── ADR-003-permission-aware-retrieval.md        # ACL metadata, pre-filtered search, final authZ check (done)
+│   ├── ADR-004-ai-gateway-and-model-access.md       # gateway, ZDR/in-tenancy admission, audit, metering (done)
+│   └── ADR-005-teradata-migration-approach.md       # rationalize, translate, re-layer, dual-run by domain (done)
 ├── diagrams/
+│   └── target-architecture-style.md                 # (Step 4) Mermaid reference (done)
 └── finance/
 ```
