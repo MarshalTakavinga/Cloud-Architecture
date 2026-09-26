@@ -29,7 +29,7 @@ Two contrasts with earlier case studies run through this one:
 | 8. GCP implementation (incl. edge) | Done — [`docs/gcp-implementation.md`](docs/gcp-implementation.md), [ADR-018](adr/ADR-018-gcp-edge-platform.md) to [ADR-023](adr/ADR-023-gcp-network-identity-and-deployment.md), [GCP diagram (Mermaid)](diagrams/gcp-implementation-architecture.md): Google Distributed Cloud (bare metal, 3-node) + Manufacturing Connect edge (Litmus) with native Sparkplug B and 270+ protocols, plus a commercial MQTT broker (three edge vendors); a fully Kestrel-built four-lane outbox; Pub/Sub + Manufacturing Data Engine → Bigtable/BigQuery, Dataflow hot path + Vertex AI; Cloud SQL insert-only + Bucket Lock for genealogy; us-east5 is in Columbus itself; VPC Service Controls for residency. GDC local operations have no documented offline limit |
 | 9. Decision matrix | Done — [`docs/decision-matrix.md`](docs/decision-matrix.md), [ADR-024](adr/ADR-024-cloud-platform-selection.md): a 7-criterion weighted matrix (the provisional weights plus a disclosed 10% genealogy-integrity criterion). **GCP wins narrowly, 3.95/5.00 (79.0%)**, over Azure at 3.83 (76.6%) and AWS at 3.34 (66.8%), on plant autonomy with native HA and the industrial protocol ecosystem (native Sparkplug B). Azure leads on genealogy integrity (engine-enforced ledger) and edge operating simplicity. Sensitivity: GCP wins even without the added criterion (4.00 vs 3.70), and only a genealogy weight of 20% or more flips the result to Azure. The decision carries 4 conditions and 4 review triggers |
 | 10. Recommended platform / target architecture | Done — [`docs/target-architecture.md`](docs/target-architecture.md): confirms GCP (ADR-024), gives the at-a-glance edge and cloud architecture, builds ADR-024's four conditions into the design (a separate genealogy evidence project, a single edge managed-service owner, the outbox as a hard gate, the MCe capacity guardrail), traces all 4 forcing functions and the driver-5 invariant to mechanisms, and adds an NFR coverage table. Carries rollout sequencing to Step 11 and the cost trigger test to Step 12 |
-| 11. Migration roadmap and ADRs | Not started |
+| 11. Migration roadmap and ADRs | Done — [`docs/migration-roadmap.md`](docs/migration-roadmap.md), [ADR-025](adr/ADR-025-rollout-sequencing.md), [ADR-026](adr/ADR-026-pilot-plant-and-wave-gates.md), [ADR-027](adr/ADR-027-coexistence-and-rollback.md), [roadmap Gantt (Mermaid)](diagrams/migration-roadmap.md): two tracks (security paced by shutdowns, data platform paced by tag mapping), security first at every plant. The December 2026 shutdown zones the 5 highest-exposure plants and July 2027 the other 5, with staged insurer acceptance negotiated from M1. Pilot at Plant 06 (existing DMZ, MES, OEM steering plant) with six pass/fail gates, then OEM-program plants first with tiered tag scope. OEM genealogy ready in November 2027. Rollback: a read-only tap, a genealogy parallel run with a per-plant authority switch, and firewall rules run in monitor mode before enforce with a back-out that never restores remote-access tools |
 | 12. Cost and risk analysis | Not started |
 
 ## Repository Structure
@@ -48,7 +48,8 @@ case-study-04-manufacturing-iot/
 │   ├── aws-implementation.md                # (Step 7) service mapping incl. edge, sizing, network, deviations (done)
 │   ├── gcp-implementation.md                # (Step 8) service mapping incl. edge, sizing, network, deviations (done)
 │   ├── decision-matrix.md                   # (Step 9) weighted matrix, sensitivity, what the others do better (done)
-│   └── target-architecture.md               # (Step 10) GCP target architecture, conditions designed in, driver tracing (done)
+│   ├── target-architecture.md               # (Step 10) GCP target architecture, conditions designed in, driver tracing (done)
+│   └── migration-roadmap.md                 # (Step 11) two-track phased plan, tiered tag scope, rollback (done)
 ├── adr/
 │   ├── ADR-001-edge-cloud-responsibility-split.md          # edge-first, cloud-for-scale (done)
 │   ├── ADR-002-plant-data-integration-pattern.md           # Unified Namespace: MQTT + Sparkplug B, ISA-95 topics (done)
@@ -73,11 +74,15 @@ case-study-04-manufacturing-iot/
 │   ├── ADR-021-gcp-time-series-and-analytics.md            # Manufacturing Data Engine → Bigtable + BigQuery, Looker (done)
 │   ├── ADR-022-gcp-genealogy-store.md                      # Cloud SQL PostgreSQL insert-only + Bucket Lock (done)
 │   ├── ADR-023-gcp-network-identity-and-deployment.md      # HA VPN to us-east5, PSC, VPC-SC, Config Sync, Harbor mirror (done)
-│   └── ADR-024-cloud-platform-selection.md                 # GCP selected, with conditions and review triggers (done)
+│   ├── ADR-024-cloud-platform-selection.md                 # GCP selected, with conditions and review triggers (done)
+│   ├── ADR-025-rollout-sequencing.md                       # security first, two tracks, OEM plants first (done)
+│   ├── ADR-026-pilot-plant-and-wave-gates.md               # Plant 06 pilot, gates G1–G6 (done)
+│   └── ADR-027-coexistence-and-rollback.md                 # read-only tap, genealogy parallel run, monitor→enforce (done)
 └── diagrams/
     ├── target-architecture-style.md         # (Step 4) Mermaid target-style diagram (done)
     ├── logical-architecture.md              # (Step 5) Mermaid component model + genealogy sequence (done)
     ├── azure-implementation-architecture.md # (Step 6) Mermaid Azure deployment diagram (done)
     ├── aws-implementation-architecture.md   # (Step 7) Mermaid AWS deployment diagram (done)
-    └── gcp-implementation-architecture.md   # (Step 8) Mermaid GCP deployment diagram (done)
+    ├── gcp-implementation-architecture.md   # (Step 8) Mermaid GCP deployment diagram (done)
+    └── migration-roadmap.md                 # (Step 11) Mermaid Gantt (done)
 ```
