@@ -29,7 +29,7 @@ Contrasts with earlier case studies:
 | 5. Vendor-neutral logical design | Done — [`docs/logical-design.md`](docs/logical-design.md), [ADR-006](adr/ADR-006-retrieval-scope-and-chunking.md), [ADR-007](adr/ADR-007-evaluation-and-release-gating.md), [ADR-008](adr/ADR-008-finops-allocation-and-unit-cost.md), [logical diagrams (Mermaid)](diagrams/logical-architecture.md): 22 logical components (ingestion, lakehouse, governance, AI layer, consumption, FinOps); a unified insurance data model (party/policy/claim with crosswalks, append-only reserve and payment facts for as-of loss triangles); six end-to-end flows, including the assistant request sequence. Tiered retrieval index (hot/reference/warm, on-demand promotion) with structure-aware chunks and citation anchors; a Claims-owned golden set with release gates (≥95% faithfulness, zero leaks, a 5% canary); FinOps with mandatory tags, per-workload compute pools, and gateway budgets decomposing the $0.05/query ceiling |
 | 6. Azure implementation (native vs. Databricks/Snowflake) | Done — [`docs/azure-implementation.md`](docs/azure-implementation.md), [ADR-009](adr/ADR-009-azure-data-platform.md) to [ADR-014](adr/ADR-014-azure-network-identity-finops.md), [Azure diagram (Mermaid)](diagrams/azure-implementation-architecture.md): each layer compared across native Azure, Databricks, and Snowflake. Chosen stack: **Azure Databricks + Unity Catalog** at the core, with Azure AI Search (GA security-filter pattern), Foundry Data Zone US models (Azure OpenAI + Claude hosted on Azure, with a ZDR approval gate), API Management as the AI gateway, immutable Blob audit, Lakebridge for Teradata, ExpressRoute + Data Box. Fabric and Snowflake were rejected with reasons (Fabric's migration tooling doesn't name Teradata; Snowflake is the runner-up, with the strongest documented Teradata/BTEQ translation). The governance gap: the AI Search index sits outside Unity Catalog |
 | 7. AWS implementation (native vs. Databricks/Snowflake) | Done — [`docs/aws-implementation.md`](docs/aws-implementation.md), [ADR-015](adr/ADR-015-aws-data-platform.md) to [ADR-020](adr/ADR-020-aws-network-identity-finops.md), [AWS diagram (Mermaid)](diagrams/aws-implementation-architecture.md): chosen stack is **AWS-native**. Components: S3 Tables (native Iceberg); Lake Formation column/cell security across Athena, Redshift, EMR, and Glue; Redshift Serverless (derived gold marts only); SageMaker Unified Studio; DMS Oracle CDC; SCT Teradata → Redshift including BTEQ → RSQL; OpenSearch with **native document-level security** plus an app claim filter; Bedrock US geo profiles (models requiring 30-day review retention excluded); a Harborline-built gateway with Guardrails and per-use-case application inference profiles; Object Lock audit. Databricks on AWS is the runner-up. Gaps: three governance planes aligned by identity, a custom gateway, and Redshift-shaped translated logic |
-| 8. GCP implementation (native vs. Databricks/Snowflake) | Not started |
+| 8. GCP implementation (native vs. Databricks/Snowflake) | Done — [`docs/gcp-implementation.md`](docs/gcp-implementation.md), [ADR-021](adr/ADR-021-gcp-data-platform.md) to [ADR-026](adr/ADR-026-gcp-network-identity-finops.md), [GCP diagram (Mermaid)](diagrams/gcp-implementation-architecture.md): chosen stack is **GCP-native**. Components: BigQuery (serverless) with Iceberg-managed tables; Dataplex + BigQuery policy tags and row policies; Sensitive Data Protection; VPC Service Controls; Datastream CDC; a **first-party GA translator for Teradata SQL, BTEQ, and TPT**; Vertex AI Vector Search (hot) + BigQuery search index under row-level security (warm); Gemini (caching off, abuse-monitoring exception) + **Claude US multi-region endpoint (GA 15 May 2026)**; **Apigee** gateway with Model Armor; Bucket Lock audit; billing export to BigQuery. Vertex AI Search ACLs were rejected (preview, permanent once set). Databricks on GCP is the runner-up |
 | 9. Decision matrix | Not started |
 | 10. Recommended platform / target architecture | Not started |
 | 11. Migration roadmap and ADRs | Not started |
@@ -48,7 +48,8 @@ case-study-05-enterprise-data-ai/
 │   ├── architecture-options-and-styles.md   # (Step 4) 6-R, 4 decisions, target style (done)
 │   ├── logical-design.md                    # (Step 5) 22 components, insurance data model, 6 flows (done)
 │   ├── azure-implementation.md              # (Step 6) 3-way comparison, Azure-track stack, deviations (done)
-│   └── aws-implementation.md                # (Step 7) 3-way comparison, AWS-native stack, deviations (done)
+│   ├── aws-implementation.md                # (Step 7) 3-way comparison, AWS-native stack, deviations (done)
+│   └── gcp-implementation.md                # (Step 8) 3-way comparison, GCP-native stack, deviations (done)
 ├── adr/
 │   ├── ADR-001-lakehouse-on-open-tables.md          # medallion lakehouse, Iceberg/Delta, second engine required (done)
 │   ├── ADR-002-unified-governance-plane.md          # one catalog/policy plane for data + AI assets (done)
@@ -69,11 +70,18 @@ case-study-05-enterprise-data-ai/
 │   ├── ADR-017-aws-retrieval.md                     # OpenSearch with native DLS + app claim filter (done)
 │   ├── ADR-018-aws-models-and-ai-gateway.md         # Bedrock US profiles, review-tier excluded, custom gateway (done)
 │   ├── ADR-019-aws-ingestion-and-teradata-migration.md  # DMS, Textract, SCT incl. BTEQ→RSQL (done)
-│   └── ADR-020-aws-network-identity-finops.md       # Direct Connect + Snowball, Identity Center⇄Entra, CUR (done)
+│   ├── ADR-020-aws-network-identity-finops.md       # Direct Connect + Snowball, Identity Center⇄Entra, CUR (done)
+│   ├── ADR-021-gcp-data-platform.md                 # BigQuery with Iceberg-managed tables (done)
+│   ├── ADR-022-gcp-governance-plane.md              # Dataplex + BigQuery policies + VPC-SC (done)
+│   ├── ADR-023-gcp-retrieval.md                     # Vector Search (hot) + BigQuery search under RLS (warm) (done)
+│   ├── ADR-024-gcp-models-and-ai-gateway.md         # Gemini + Claude US multi-region behind Apigee (done)
+│   ├── ADR-025-gcp-ingestion-and-teradata-migration.md  # Datastream, Document AI, translator SQL/BTEQ/TPT (done)
+│   └── ADR-026-gcp-network-identity-finops.md       # Interconnect + Transfer Appliance, WIF⇄Entra, reservations (done)
 ├── diagrams/
 │   ├── target-architecture-style.md                 # (Step 4) Mermaid reference (done)
 │   ├── logical-architecture.md                      # (Step 5) Mermaid component model + assistant sequence (done)
 │   ├── azure-implementation-architecture.md         # (Step 6) Mermaid Azure track (done)
-│   └── aws-implementation-architecture.md           # (Step 7) Mermaid AWS track (done)
+│   ├── aws-implementation-architecture.md           # (Step 7) Mermaid AWS track (done)
+│   └── gcp-implementation-architecture.md           # (Step 8) Mermaid GCP track (done)
 └── finance/
 ```
