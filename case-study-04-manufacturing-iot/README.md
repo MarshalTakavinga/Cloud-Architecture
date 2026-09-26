@@ -27,7 +27,7 @@ Two contrasts with earlier case studies run through this one:
 | 6. Azure implementation (incl. edge) | Done — [`docs/azure-implementation.md`](docs/azure-implementation.md), [ADR-006](adr/ADR-006-azure-edge-platform.md) to [ADR-011](adr/ADR-011-azure-network-identity-and-deployment.md), [Azure diagram (Mermaid)](diagrams/azure-implementation-architecture.md): Azure IoT Operations on 3-node Arc-enabled K3s per plant; four-lane outbox built from native data flows plus a Kestrel journal forwarder and gap-based backfill uploader; Event Hubs Premium (live/alerts/backfill/genealogy hubs); Fabric Eventhouse + Lakehouse, Stream Analytics hot path (live only), Logic Apps to SAP; Azure SQL Hyperscale append-only ledger tables for genealogy; Envoy DMZ proxy, ACR connected registry, and Flux for pull-only deployment. Two documented deviations carried to Step 9: IoT Operations' 72-hour offline ceiling, and JSON/CloudEvents rather than Sparkplug B |
 | 7. AWS implementation (incl. edge) | Done — [`docs/aws-implementation.md`](docs/aws-implementation.md), [ADR-012](adr/ADR-012-aws-edge-platform.md) to [ADR-017](adr/ADR-017-aws-network-identity-and-deployment.md), [AWS diagram (Mermaid)](diagrams/aws-implementation-architecture.md): Greengrass v2 + SiteWise Edge (MQTT-enabled) on an active/passive pair (Pacemaker/DRBD, which Kestrel must productionize, since Greengrass isn't natively HA); stream manager supplies the four lanes natively (priorities, TTL, bandwidth cap); Kinesis + Managed Flink; Timestream for InfluxDB + S3 Tables/Athena (Timestream for LiveAnalytics closed to new customers June 2025); Aurora PostgreSQL insert-only + S3 Object Lock for genealogy (QLDB retired July 2025); IoT Core per-node X.509; Identity Center federated to Entra |
 | 8. GCP implementation (incl. edge) | Done — [`docs/gcp-implementation.md`](docs/gcp-implementation.md), [ADR-018](adr/ADR-018-gcp-edge-platform.md) to [ADR-023](adr/ADR-023-gcp-network-identity-and-deployment.md), [GCP diagram (Mermaid)](diagrams/gcp-implementation-architecture.md): Google Distributed Cloud (bare metal, 3-node) + Manufacturing Connect edge (Litmus) with native Sparkplug B and 270+ protocols, plus a commercial MQTT broker (three edge vendors); a fully Kestrel-built four-lane outbox; Pub/Sub + Manufacturing Data Engine → Bigtable/BigQuery, Dataflow hot path + Vertex AI; Cloud SQL insert-only + Bucket Lock for genealogy; us-east5 is in Columbus itself; VPC Service Controls for residency. GDC local operations have no documented offline limit |
-| 9. Decision matrix | Not started |
+| 9. Decision matrix | Done — [`docs/decision-matrix.md`](docs/decision-matrix.md), [ADR-024](adr/ADR-024-cloud-platform-selection.md): a 7-criterion weighted matrix (the provisional weights plus a disclosed 10% genealogy-integrity criterion). **GCP wins narrowly, 3.95/5.00 (79.0%)**, over Azure at 3.83 (76.6%) and AWS at 3.34 (66.8%), on plant autonomy with native HA and the industrial protocol ecosystem (native Sparkplug B). Azure leads on genealogy integrity (engine-enforced ledger) and edge operating simplicity. Sensitivity: GCP wins even without the added criterion (4.00 vs 3.70), and only a genealogy weight of 20% or more flips the result to Azure. The decision carries 4 conditions and 4 review triggers |
 | 10. Recommended platform / target architecture | Not started |
 | 11. Migration roadmap and ADRs | Not started |
 | 12. Cost and risk analysis | Not started |
@@ -46,7 +46,8 @@ case-study-04-manufacturing-iot/
 │   ├── logical-design.md                    # (Step 5) component model, OEE definition, 5 flows, security (done)
 │   ├── azure-implementation.md              # (Step 6) service mapping incl. edge, sizing, network, deviations (done)
 │   ├── aws-implementation.md                # (Step 7) service mapping incl. edge, sizing, network, deviations (done)
-│   └── gcp-implementation.md                # (Step 8) service mapping incl. edge, sizing, network, deviations (done)
+│   ├── gcp-implementation.md                # (Step 8) service mapping incl. edge, sizing, network, deviations (done)
+│   └── decision-matrix.md                   # (Step 9) weighted matrix, sensitivity, what the others do better (done)
 ├── adr/
 │   ├── ADR-001-edge-cloud-responsibility-split.md          # edge-first, cloud-for-scale (done)
 │   ├── ADR-002-plant-data-integration-pattern.md           # Unified Namespace: MQTT + Sparkplug B, ISA-95 topics (done)
@@ -70,7 +71,8 @@ case-study-04-manufacturing-iot/
 │   ├── ADR-020-gcp-ingestion-and-hot-path.md               # Pub/Sub + Dataflow + Vertex AI, Cloud Run→SAP (done)
 │   ├── ADR-021-gcp-time-series-and-analytics.md            # Manufacturing Data Engine → Bigtable + BigQuery, Looker (done)
 │   ├── ADR-022-gcp-genealogy-store.md                      # Cloud SQL PostgreSQL insert-only + Bucket Lock (done)
-│   └── ADR-023-gcp-network-identity-and-deployment.md      # HA VPN to us-east5, PSC, VPC-SC, Config Sync, Harbor mirror (done)
+│   ├── ADR-023-gcp-network-identity-and-deployment.md      # HA VPN to us-east5, PSC, VPC-SC, Config Sync, Harbor mirror (done)
+│   └── ADR-024-cloud-platform-selection.md                 # GCP selected, with conditions and review triggers (done)
 └── diagrams/
     ├── target-architecture-style.md         # (Step 4) Mermaid target-style diagram (done)
     ├── logical-architecture.md              # (Step 5) Mermaid component model + genealogy sequence (done)
