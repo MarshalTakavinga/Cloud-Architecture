@@ -60,7 +60,7 @@ See [`diagrams/migration-roadmap.md`](../diagrams/migration-roadmap.md) for the 
 |---|---|---|
 | **G0** | M3 | Iceberg parity; model terms confirmed; translation proof of concept sized ([ADR-027](../adr/ADR-027-cloud-platform-selection.md)) |
 | **A1: assistant pilot go-live** | M6 | Golden-set faithfulness ≥ 95%. **Zero red-team leaks**. p95 ≤ 6 s. Audit trail verified end to end. Apigee admitting only confirmed-term models. The use case approved in G4 |
-| **A2: assistant scale** | M8 | Pilot adoption ≥ 60% weekly active. Measured search-time reduction. **Zero leakage incidents**. Cost per query ≤ $0.05. No regression on online quality metrics |
+| **A2: assistant scale** | M8 | Pilot adoption ≥ 60% weekly active. Measured search-time reduction. **Zero leakage incidents**. Measured variable cost per query ≤ $0.02, and modeled at-scale all-in cost ≤ $0.05 (amended in Step 12; the monthly all-in ≤ $0.05 test applies from M14). No regression on online quality metrics |
 | **D (per domain): domain sign-off** | Per phase | **20 consecutive business days** of clean reconciliation (row counts, control totals, critical reports) plus business-owner sign-off. For reserving: **two parallel quarterly closes** reconciled |
 | **T: Teradata decommission** | M19 | Every domain signed off. No consumer reads Teradata for 30 days (verified from query logs). Archive verified |
 

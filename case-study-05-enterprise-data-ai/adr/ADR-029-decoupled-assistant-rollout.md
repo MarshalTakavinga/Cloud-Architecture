@@ -40,3 +40,16 @@ The assistant is rolled out **on its own track, independent of the warehouse mig
 - **Positive:** The business sees governed AI value by **M6–M8**, and the sanctioned tool starts replacing shadow AI early, which is the real fix for forcing function 1.
 - **Positive:** The pilot produces the unit-cost and adoption evidence that Step 12's value case needs.
 - **Negative / accepted trade-off:** Two parallel programs (the assistant and the warehouse exit) compete for the same platform and governance team. Phase 0 staffing and the G4 approval board are shared, and are a capacity risk.
+
+## Addendum — Step 12 Unit-Cost Check
+
+[`docs/cost-and-risk-analysis.md`](../docs/cost-and-risk-analysis.md) modeled the assistant's unit cost in [`finance/TCO-Analysis.xlsx`](../finance/TCO-Analysis.xlsx).
+
+- **Result at scale:** about **$0.033 per query** all-in (variable $0.013 plus fixed infrastructure spread over 27.5M queries a year), which passes NFR-11's $0.05 ceiling. The ceiling is first met at about 2,330 active users, around M11.
+- **Problem with gate A2 as written:** with 300 pilot users, fixed costs alone give about **$0.157 per query**, so "cost per query ≤ $0.05" would fail in the pilot however good the design is.
+
+**Gate A2's cost criterion is replaced by:**
+1. **measured variable cost per query ≤ $0.02** during the pilot
+2. **modeled at-scale all-in cost ≤ $0.05**, computed from the pilot's measured tokens per query
+
+The monthly all-in test (≤ $0.05) applies from **M14**, once all users are on. The gateway also alerts on **tokens per query**, because context size is the lever that can break the ceiling (12K tokens on the frontier model gives about $0.068).

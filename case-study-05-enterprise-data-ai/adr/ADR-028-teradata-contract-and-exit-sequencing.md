@@ -43,3 +43,13 @@ At **M3**, with the G0 results in hand:
 - **Negative / accepted trade-off:** **The bridge premium** (about $3.9M × 1.25 for one year) plus **dual-running costs** are the price of a safe exit. Both are modeled in Step 12.
 - **Negative / accepted trade-off:** The ageing appliance runs for another year. Extended hardware support is a negotiated term, and hardware failure during the bridge is a named risk. Frozen domains reduce the blast radius over time.
 - **Review trigger:** if the G0 translation proof of concept shows more than 90% automated translation, **and** the claims-domain dual-run passes gate D by M8, Harborline can revisit whether to seek early termination under the bridge. That is not assumed.
+
+## Addendum — Step 12 Cost and Schedule Check
+
+[`docs/cost-and-risk-analysis.md`](../docs/cost-and-risk-analysis.md) modeled the exit in [`finance/TCO-Analysis.xlsx`](../finance/TCO-Analysis.xlsx):
+
+- **The bridge year costs about $5.1M** (licence at +25% plus extended hardware support). About **$1.2M of that is premium** over the current rate.
+- **The five-year data-platform saving is about $6.9M**, with payback in Year 4. It depends heavily on avoiding the ~$6M appliance refresh.
+- **A 3-month slip past the bridge costs about $1.6M.** No contract term currently covers it, and the plan has only one month of margin.
+
+**Added negotiating term:** the bridge must include a **month-to-month extension option at the bridge rate** (for example, up to six months), so that a late reserving close cannot force an emergency renewal. Status is unchanged: Approved.
