@@ -46,3 +46,21 @@ Four tracks were designed in Steps 6–9 and scored in [`decision-matrix.md`](..
 - **Negative / accepted trade-off:** **Concentration in Microsoft** across identity, productivity, SIEM, public cloud, and now the private platform. This is named in the Step 13 risk register, mitigated by the annual exit test ([ADR-005](ADR-005-platform-api-and-portability.md)) and portable images and plans. The interagency guidance requires it to be managed, not avoided.
 - **Negative / accepted trade-off:** Tier 0 runs **outside** Azure Local's own VM management to meet the invariant. The bank owns that automation and the DR orchestrator.
 - **Negative / accepted trade-off:** 1,400 VDI users change product (Horizon → AVD).
+
+## Addendum — Step 13 Cost Check
+
+[`docs/cost-and-risk-analysis.md`](../docs/cost-and-risk-analysis.md) modeled all three paths in [`finance/TCO-Analysis.xlsx`](../finance/TCO-Analysis.xlsx):
+
+- **NFR-10 passes narrowly.** The Azure platform's five-year TCO is **$30.56M against $31.87M** for the status quo (4% margin). From Y3, the like-for-like run-rate is about **$1.73M a year lower**.
+- **The G0-2 threshold:** on illustrative pricing, a Broadcom 3-year offer **below about $0.89M a year (−46%)** reverses this ADR to VCF.
+- **The case rests on two Microsoft-side assumptions.**
+  - With **0% Azure Hybrid Benefit coverage**, NFR-10 fails by $0.73M.
+  - If the **2023 hosts can't be reused**, NFR-10 fails by $0.29M.
+  - In a combined downside, a Broadcom discount of only 12.5% would flip the decision.
+
+**Gate G0 therefore gains two checks, both by M4:**
+- **G0-5:** Microsoft confirms in writing that Azure Hybrid Benefit (Windows Server Datacenter + SA) covers every Azure Local host core.
+- **G0-6:** the 2023 hosts are confirmed on the Azure Local validated catalog.
+
+**The G0-2 threshold is recomputed with these answers** before the Broadcom decision. Status is unchanged: Approved, conditional on G0.
+
