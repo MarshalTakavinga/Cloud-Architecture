@@ -35,7 +35,7 @@ Contrasts with earlier case studies:
 | 1. Business problem | Done — [`docs/problem-statement.md`](docs/problem-statement.md) |
 | Current-state architecture | Done — [`docs/current-state.md`](docs/current-state.md); diagram not yet drawn |
 | 2–3. Capabilities, requirements, and NFRs | Done — [`docs/requirements.md`](docs/requirements.md) |
-| 4. Architecture options and styles | Not started |
+| 4. Architecture options and styles | Done — [`docs/architecture-options-and-styles.md`](docs/architecture-options-and-styles.md), [ADR-001](adr/ADR-001-platform-strategy-and-workload-placement.md) to [ADR-005](adr/ADR-005-platform-api-and-portability.md), [target-style diagram (Mermaid)](diagrams/target-architecture-style.md). **Disposition by workload group:** core banking retained, rehosted only on a certified hypervisor (otherwise a certified island), and moved last; Tier 2 ~15% retired; dev/test to the landing zone; Rancher replatformed; SRM runbook replaced. **Platform strategy:** one primary private cloud in two sites plus a governed public-cloud landing zone, with placement by tier. **Recovery:** independent active/standby sites with recovery as code (Data Guard sized for batch, firewall policy as code, orchestrated plans, a 3-hour budget inside the 4-hour RTO). **Cyber recovery:** a three-layer design with a vault in a separate admin domain and a clean room in DC2. **Govern centrally, operate locally,** with a disconnected-week test for every track. **Delivery:** platform API + catalog, pipeline images, and an annual exit test. **AWS lens:** Outposts fails NFR-3 (no start/stop when disconnected); EVS/AVS/GCVE are assessed as the VCF track's cloud extension |
 | 5. Vendor-neutral logical design | Not started |
 | 6. VMware Cloud Foundation implementation | Not started |
 | 7. Azure Local + Azure Arc implementation | Not started |
@@ -51,8 +51,17 @@ Contrasts with earlier case studies:
 ```
 case-study-06-hybrid-private-cloud/
 ├── README.md
-└── docs/
-    ├── problem-statement.md   # organization, 4 forcing functions, 5 ranked drivers, the invariant (done)
-    ├── current-state.md       # two DCs, 76 hosts / 4,160 cores, tiers and the failed DR test, $5.05M/yr baseline (done)
-    └── requirements.md        # 8 capabilities, 12 NFRs, requirement/constraint/assumption/risk, priority weights (done)
+├── docs/
+│   ├── problem-statement.md   # organization, 4 forcing functions, 5 ranked drivers, the invariant (done)
+│   ├── current-state.md       # two DCs, 76 hosts / 4,160 cores, tiers and the failed DR test, $5.05M/yr baseline (done)
+│   ├── requirements.md        # 8 capabilities, 12 NFRs, requirement/constraint/assumption/risk, priority weights (done)
+│   └── architecture-options-and-styles.md   # (Step 4) 6-R by workload group, 5 decisions, AWS lens, target style (done)
+├── adr/
+│   ├── ADR-001-platform-strategy-and-workload-placement.md   # one private cloud in 2 sites + landing zone, placement by tier (done)
+│   ├── ADR-002-recovery-as-code-active-standby.md            # independent sites, Data Guard, policy as code, orchestrated recovery (done)
+│   ├── ADR-003-cyber-recovery-vault-and-isolated-recovery.md # immutable copies, isolated vault, clean room (done)
+│   ├── ADR-004-govern-centrally-operate-locally.md           # one governance plane, local ops path, disconnected-week test (done)
+│   └── ADR-005-platform-api-and-portability.md               # platform API + catalog, portability rules, annual exit test (done)
+└── diagrams/
+    └── target-architecture-style.md                          # (Step 4) Mermaid reference (done)
 ```
